@@ -1,1 +1,3 @@
 # StatMod
+
+Statistical Modelling assignments
