@@ -197,3 +197,98 @@ M3 <- matrix(c(1, 2, 2, 3), ncol = 2)
 solve(M3)
 M3 %*% solve(M3)
 
+################################################################
+# Folie 53-54: Indizierung
+################################################################
+
+x[3]
+x[1:3]
+
+elem <- 2:5
+M2[elem]
+
+M2[2, 3]
+M2[, c(1, 3)]
+M2[2, 2:3]
+
+is.matrix(M2)
+is.matrix(M2[2, 2:3])
+#  R versucht beim Indizieren eine Dimension fallen zu lassen!
+# Drop: Delete the dimensions of an array which have only one level
+is.matrix(M2[2, 2:3, drop = FALSE])
+
+M4 <- matrix(1:16, ncol = 4, byrow = TRUE)
+M4
+
+M5 <- M4[-4, ]
+M5
+
+# Matrix erweitern (Zeile)
+rbind(M5, 13:16)
+
+M6 <- M4[ , -(3:4)]
+M6
+
+# Matrix erweitern (Spalte)
+cbind(M6,
+      seq(3, by = 4, length.out = 4),
+      seq(4, by = 4, length.out = 4))
+
+# Indizierung und Zuweisung: Elemente der Objekte verändern
+
+M4[4, ] <- 1:4
+M4
+
+################################################################
+# Folie 55: Ein weiterer Datentyp
+################################################################
+
+# Typ des Objekts:
+mode(x)
+mode(V)
+mode(M2)
+
+alb <- matrix(c("Kraftwerk", "Kraftwerk",
+                "Daft Punk", "Daft Punk",
+                "Autobahn", "Trans Europa Express",
+                "Homework", "Random Access Memories")
+              , ncol = 2)
+mode(alb)
+
+# Spalten und Zeilen beschriften und Indizieren:
+colnames(alb) <- c("Band", "Album")
+rownames(alb) <- c(1974, 1977, 1997, 2013)
+
+alb
+alb["1977", ]
+
+# Zeichenketten miteinander verbinden
+paste(alb[ , 1], alb[ , 2], sep = " - ")
+
+################################################################
+# Folie 56: Faktoren
+################################################################
+
+titanic_data <- data.frame(Titanic)
+titanic_data
+titanic_data_fact <- factor(titanic_data$Class, 
+                            labels = c("1st", "2nd", "3rd", "Crew"))
+titanic_data_fact
+
+code <- c(10, 6, 2, 8, 8, 10, 10, 2)
+code_fact <- factor(code, labels = c(2, 6, 8, 10))
+code_fact
+as.numeric(code_fact)
+as.numeric(as.character(code_fact))
+
+################################################################
+# Folie 57: Kategorisierung metrischer Daten
+################################################################
+
+women_grp <- cut(women$height, breaks = 3, labels = c("Short", "Medium", "Tall"))
+women_grp
+table(women_grp)
+
+women_grp_new <- cut(women$height, breaks = c(0, 60, 65, 100))
+women_grp_new
+table(women_grp_new)
