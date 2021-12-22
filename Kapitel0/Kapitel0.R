@@ -292,3 +292,110 @@ table(women_grp)
 women_grp_new <- cut(women$height, breaks = c(0, 60, 65, 100))
 women_grp_new
 table(women_grp_new)
+
+################################################################
+# Folie 58: Data frames
+################################################################
+
+mark <- c("Canon", "Fujifilm", "Pentax")
+stil <- c("Sport", "Street", "Natur")
+zahl <- c(380, 50, 70)
+mat <- matrix(c(mark, stil, zahl), ncol = 3)
+sum(mat[ , 3])
+mode(mat)
+
+df <- data.frame(mark, stil, zahl)
+sum(df[ , 3])
+mode(df)
+df$mark
+
+################################################################
+# Folie 59: Ueberblick ueber Obejkte
+################################################################
+
+# Laenge/Spaltenanzahl
+length(df)
+length(M4)
+length(V)
+
+dim(df)
+dim(M4)
+
+nrow(df)
+ncol(df)
+
+unique(df)
+unique(M4)
+unique(code)
+
+str(df)
+
+head(iris)
+head(iris, 10)
+tail(iris)
+
+################################################################
+# Folien 60-62: Logische Vektoren
+################################################################
+
+a <- 16
+b <- 26
+a == b
+a != b
+a > b
+a < b
+a <= 17
+a > 10 & b > 30
+a > 10 | b > 30
+xor(a == 16, b == 26)
+xor(a == 16, b == 999)
+
+xor
+
+is.numeric(mark)
+
+ifelse(alb[, 1] == "Kraftwerk", "Deutsche Band", "Franzoesische Band")
+
+zahl_max <- zahl == max(zahl)
+which(zahl_max)
+which(!zahl_max)
+
+which.max(zahl)
+mark[zahl_max]
+
+# Anteil der Personen kleiner als 65
+sum(women$height <= 65) / length(women$height)
+
+cumsum(zahl)
+cumsum(sort(zahl))
+zahl_neu <- c(6, 10, 8, 12, 10, 14, 12)
+any(zahl_neu > 12)
+all(zahl_neu > 10)
+all(zahl_neu != 11)
+
+################################################################
+# Folie 63: Listen
+################################################################
+
+data(state)
+?state
+
+test_list <- list(state.x77, women$height, 1:10)
+test_list
+names(test_list) <- c("USA", "Groesse", "Zahlen")
+test_list
+str(test_list)
+
+list_neu <- test_list[c("USA", "Zahlen")]
+list_neu
+
+USA <- test_list["USA"]
+USA
+dim(USA)
+
+USA <- test_list[["USA"]]
+USA
+dim(USA)
+
+list_neu[["USA"]][rownames(list_neu[["USA"]]) == "Alaska", ]
+
