@@ -399,3 +399,97 @@ dim(USA)
 
 list_neu[["USA"]][rownames(list_neu[["USA"]]) == "Alaska", ]
 
+################################################################
+# Folie 64: Die zentrale Plot-Funktion
+################################################################
+
+plot(1:10)
+plot(1:10, 10:19, type = "l")
+
+################################################################
+# Folie 66: Plotten in eine PDF-Datei
+################################################################
+
+plot_pfad <- "Plots"
+pdf(paste(plot_pfad, "/vis1.pdf", sep = ""))
+plot(1:10)
+dev.off()
+
+png(paste(plot_pfad, "/vis2.png", sep = ""))
+plot(1:10, type = "l")
+dev.off()
+
+# System: Terminal-Befehle
+system("open ./Plots/vis1.pdf")
+
+################################################################
+# Folie 67: Achsenbeschriftungen und Ueberschriften
+################################################################
+
+plot(1:10, xlab = "Reihenfolge der Daten", ylab = "Werte",
+      main = "Die Zahlen von 1 bis 10")
+abline(h = 5)
+abline(v = 5)
+
+plot(1:10, xlab = "Reihenfolge der Daten", ylab = "Werte",
+     main = "Die Zahlen von 1 bis 10")
+abline(h = c(2, 5, 7, 9))
+abline(v = c(3, 6, 8))
+
+################################################################
+# Folie 69: Plot-Typ
+################################################################
+
+plot(x = 1:10, y = rev(1:10),
+     xlab = "Reihenfolge der Daten",
+     ylab = "Werte",
+     main = "Die Zahlen von 10 bis 1",
+     type = "l", col = "red")
+
+plot(1:10, col = 1:10, cex = 8)
+
+plot(1:10, col = 1:10, cex = 8, pch = "+")
+
+################################################################
+# Folie 71: Einlesen von Dateien in Fremdformaten
+################################################################
+
+dat <- read.csv2("Daten/utown.csv", header = TRUE)
+str(dat)
+
+dat_neu <- dat[ , 2:4]
+str(dat_neu)
+
+write.csv(dat_neu, file = "Daten/utown_new.csv", row.names = FALSE)
+
+################################################################
+# Folie 72: Lage- und Streuungsmasse
+################################################################
+
+min(dat$AGE)
+max(dat$AGE)
+range(dat$AGE)
+range(dat$PRICE)
+
+dat_tab <- table(dat$AGE)
+dat_tab
+
+dat_mod <- as.numeric(names(dat_tab[dat_tab == max(dat_tab)]))
+dat_mod
+
+dat_med <- median(dat$AGE)
+dat_med
+
+dat_mean <- mean(dat$AGE)
+dat_mean
+
+quantile(dat$AGE, probs = c(0.25, 0.75))
+summary(dat$AGE)
+var(dat$AGE)
+sd(dat$AGE)
+
+boxplot(PRICE ~ UTOWN, data = dat)
+
+install.packages("RXKCD")
+library(RXKCD)
+getXKCD(302)
