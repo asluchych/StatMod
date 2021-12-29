@@ -128,3 +128,91 @@ lm.trees <- lm(trees$Volume ~ trees$Girth + trees$Height)
 s3d$plane3d(lm.trees)
 s3d$points3d(seq(10, 20, 2), seq(85, 60, -5), seq(60, 10, -10),
              col = "red", type = "h", pch = 8)
+
+#########################################################
+# Folie 57: Lineare Restriktionen
+#########################################################
+library(carData)
+linearHypothesis()
+
+#########################################################
+# Folie 67
+#########################################################
+install.packages('wooldridge')
+library(wooldridge)
+data("wage1")
+
+data <- wage1
+
+lin_lin_mod <- lm(wage ~ educ + exper + tenure, data = data)
+
+log_lin_mod <- lm(log(wage) ~ educ + exper + tenure, data = data)
+
+#########################################################
+# Folie 68
+#########################################################
+lin_lin_mod.stdres <- rstandard(lin_lin_mod)
+qqnorm(lin_lin_mod.stdres, col = "steelblue",
+       main = "QQ-Plot des linearen Modells")
+qqline(lin_lin_mod.stdres, col = "red")
+
+log_lin_mod.stdres <- rstandard(log_lin_mod)
+qqnorm(log_lin_mod.stdres, col = "steelblue",
+       main = "QQ-Plot des log-linearen Modells")
+qqline(log_lin_mod.stdres, col = "red")
+
+#########################################################
+# Folie 69
+#########################################################
+
+summary(log_lin_mod)
+
+Koeff <- function(beta){100*(exp(beta) - 1)}
+
+Koeff(log_lin_mod$coefficients[2])
+
+#########################################################
+# Folie 75
+#########################################################
+linearHypothesis(log_lin_mod, c("exper = 0", "tenure = 0"))
+
+#########################################################
+# Folien 76-77
+#########################################################
+
+plot(log_lin_mod)
+
+#########################################################
+# Folie 83
+#########################################################
+CPS1985 <- read.csv("CPS1985.csv")
+str(data)
+
+# Dummy-Variable hinzufügen
+CPS_reg <- lm(log(wage) ~ education + gender, data = CPS1985)
+summary(CPS_reg)
+
+# Basiskategorie aendern
+table(CPS1985$gender)
+CPS1985$gender <- as.factor(CPS1985$gender)
+CPS1985$gender <- relevel(CPS1985$gender, ref = "male")
+
+CPS_reg_relev <- lm(log(wage) ~ education + gender, data = CPS1985)
+summary(CPS_reg_relev)
+
+Koeff(CPS_reg$coefficients[2])
+Koeff(CPS_reg$coefficients[3])
+
+#########################################################
+# Folie 87
+#########################################################
+# Interaktion mit Dummys
+CPS_interact_reg <- lm(log(wage) ~ education + gender + education*gender,
+                       data = CPS1985)
+summary(CPS_interact_reg)
+
+#########################################################
+# Folie 88
+#########################################################
+linearHypothesis(CPS_interact_reg, c("genderfemale = 0", "education:genderfemale = 0"))
+
