@@ -216,3 +216,21 @@ summary(CPS_interact_reg)
 #########################################################
 linearHypothesis(CPS_interact_reg, c("genderfemale = 0", "education:genderfemale = 0"))
 
+#########################################################
+# Folie 94
+#########################################################
+CPS_reg_two_dum <- lm(log(wage) ~ education + gender + married,
+                      data = CPS1985)
+summary(CPS_reg_two_dum)
+
+#########################################################
+# Folie 95
+#########################################################
+CPS_reg_dum_inter <- lm(log(wage) ~ education + gender + married + gender*married,
+                      data = CPS1985)
+summary(CPS_reg_dum_inter)
+
+#########################################################
+# Folie 96
+#########################################################
+dataDuncan <- Duncan
