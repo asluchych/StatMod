@@ -78,10 +78,46 @@ library("effects")
 e1.log <- predictorEffect("income", log.model)
 plot(e1.log)
 
-
 #################################################
 # Folie 34
 #################################################
 
 library('arm')
-binnedplot(log.model$fitted.values, log.model$residuals )
+binnedplot(log.model$fitted.values, log.model$residuals)
+
+#################################################
+# Folie 37
+#################################################
+
+null_log.model <- update(log.model, formula = . ~ 1)
+lrtest(null_log.model, log.model)
+
+dev_diff <- log.model$null.deviance - log.model$deviance
+dev_diff
+1 - pchisq(dev_diff, df = log.model$df.null - log.model$df.residual)
+
+#################################################
+# Folie 38
+#################################################
+
+lrtest(log.model, . ~ + I(predict(log.model, type = "link")^2))
+
+#################################################
+# Folie 39
+#################################################
+
+1 - logLik(log.model)/logLik(null_log.model)
+
+#################################################
+# Folie 40
+#################################################
+
+prop.table(table(Obs = SwissLabor$participation, Pred = round(fitted(log.model))))
+
+#################################################
+# Folie 45
+#################################################
+
+prob.model <- glm(participation ~ income + age + education + youngkids + 
+                   oldkids + foreign + I(age^2), family = binomial(link = "probit"), data = SwissLabor.logit)
+summary(prob.model)
