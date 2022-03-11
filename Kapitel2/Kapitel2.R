@@ -121,3 +121,81 @@ prop.table(table(Obs = SwissLabor$participation, Pred = round(fitted(log.model))
 prob.model <- glm(participation ~ income + age + education + youngkids + 
                    oldkids + foreign + I(age^2), family = binomial(link = "probit"), data = SwissLabor.logit)
 summary(prob.model)
+
+#################################################
+# Folie 94
+#################################################
+
+library(AER)
+data("GSOEP9402", package = "AER")
+gsoep <- GSOEP9402
+xtabs(~ school + memployment, data = gsoep)
+
+#################################################
+# Folie 95
+#################################################
+
+mosaicplot(~ meducation + school, data = gsoep, off = 0, color = TRUE)
+
+#################################################
+# Folie 96
+#################################################
+
+mosaicplot(~ log(income) + school, data = gsoep, off = 0, color = TRUE)
+
+#################################################
+# Folie 108
+#################################################
+
+gsoep_pol <- polr(school ~ meducation + memployment + log(income) + log(size) + 
+                    parity, data = gsoep, Hess = TRUE)
+summary(gsoep_pol)
+
+#################################################
+# Folie 110
+#################################################
+
+library(effects)
+plot(allEffects(gsoep_pol), confin = FALSE)
+
+#################################################
+# Folie 114
+#################################################
+
+library(AER)
+data("RecreationDemand")
+recreationDemand <- subset(RecreationDemand, subset = quality != 0)
+summary(recreationDemand)
+
+#################################################
+# Folie 116
+#################################################
+
+barplot(RecreationDemand$trips, xlab = "Haeufigket", ylab = "trips")
+
+#################################################
+# Folie 120
+#################################################
+
+fm_pois <- glm(trips ~ ., family = poisson, data = recreationDemand)
+
+summary(fm_pois)
+
+#################################################
+# Folie 122
+#################################################
+
+lrtest(fm_pois, . ~ . + I(predict(fm_pois, type = "link")^2))
+
+#################################################
+# Folie 125
+#################################################
+
+dispersiontest(fm_pois)
+
+#################################################
+# Folie 126
+#################################################
+
+fm_quasi_pois <- glm(trips ~ ., family = quasipoisson, data = recreationDemand)
+summary(fm_quasi_pois)
