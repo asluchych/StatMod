@@ -1,0 +1,77 @@
+---
+title: "Ubung00"
+author: "Anatol"
+date: 18/03/2022
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Plain text
+some other text.
+
+End a line with two spaces to start a new paragraph.  
+*italics* and _italics_  
+**bold** and __bold__  
+superscript^2^  
+~~strikethrough~~  
+[link](www.rstudio.com)  
+
+# Header 1  
+
+## Header 2  
+### Header 3  
+#### Header 4
+##### Header 5  
+###### Header 6  
+
+endash: --  
+emdash: ---  
+ellipsis: ...  
+inline equation: $A = \pi*r^{2}$  
+image: ![](https://www.karrieretag.org/wp-content/uploads/2019/01/Freie-Universitaet-Berlin-logo.png)  
+horizontal rule (or slide break):
+
+***  
+
+> block quote  
+
+* unordered list
+* item 2
+  + sub-item 1
+  + sub-item 2
+
+Table Header | Second Header
+------------ | ------------
+Table Cell   | Cell 2
+Cell 3       | Cell 4
+
+Two plus to equals `r 2+2`.
+
+```{r}
+library(datasets)
+dim(iris)
+```
+
+Don't show code output
+```{r eval=FALSE}
+library(datasets)
+dim(iris)
+```
+
+Don't show code itself
+```{r echo=FALSE}
+library(datasets)
+dim(iris)
+```
+
+## Aufgabe 1c)
+
+```{r}
+2^5/20
+```
+
