@@ -56,6 +56,7 @@ library(car)
 ```
 
 Deskription des Prestige-Datensatzes:
+
 ```{r}
 summary(Prestige)
 str(Prestige)
@@ -63,10 +64,10 @@ head(Prestige)
 ```
 
 Bei der Variable type gibt es 4 NA's, die wir weglassen:
+
 ```{r}
 data <- na.omit(Prestige)
 str(data)
-plot(data)
 ```
 
 ## 1a)
@@ -77,16 +78,158 @@ plot(data)
 plot(data)
 ```
 
-Die Plots sind hisichtlich der Hauptachse spiegelverkehrt. 
-Prestige gegen Women: man kann keinen Zusammenhang im Scatterplot beobachten
-Prestige gegen Income: hier lässt sich ein positiver Zusammenhang beobachten: mehr Income, mehr Prestge
+Die Plots sind hisichtlich der Hauptachse spiegelverkehrt.   
+*prestige gegen women*: man kann keinen Zusammenhang im Scatterplot beobachten.  
+*prestige gegen income*: hier lässt sich ein positiver Zusammenhang beobachten: mehr Income, mehr Prestge. Der Zusammenhang ist aber nicht linear.  
+*prestige gegen education*: **klarer positver linearer Zusammenhang: mit mehr Bildung geht mehr Prestige einher.**  
+*prestige gegen census*: schwer zu interpretieren.   
+*prestige gegen type*: es gibt ein Zusammenhang zwischen Jobtyp und Prestige. 
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+plot(data$education, data$income)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Es scheint ein positiver linearer Zusammenhang zwischen Bildung und Einkommen zu geben.  
+
+Boxplots
+
+```{r}
+boxplot(data)
+boxplot(data$income, main = colnames(data)[2])
+```
+
+Berufsgruppen mit NA
+
+```{r}
+rownames(Prestige)[is.na(Prestige$type)]
+```
+
+athletes, newsboys, babysitters and farmers konnten keiner Gruppe zugeordnet werden.  
+Durchschnittliches Einkommen in verschiedenen Job-Typen:  
+```{r}
+tapply(data$income, data$type, mean)
+
+```
+
+
+
+```{r}
+tapply(data$income, data$type, median)
+tapply(data$income, data$type, min)
+tapply(data$income, data$type, max)
+tapply(data$income, data$type, sd)
+```
+
+Metrische Variablen
+```{r}
+hist(data$education, breaks = 5)
+```
+
+Density
+```{r}
+plot(density(data$education), main = "Dichteplot Bidlung", col = "red")
+```
+
+
+```{r}
+hist(data$income, prob = TRUE, ylim = c(0, 0.00015), breaks = 17)
+lines(density(data$income), col = "red")
+```
+
+
+```{r}
+table(data$type)
+barplot(table(data$type))
+```
+
+Einzelne Berufstypen unterscheiden sich hinsichtlich ihres Einkommens: wahrend blue-collar und white-collar Arbeiter ungefahr gleich verdienen, haben professionals deutlich hoheres Einkommen.  
+
+Viele Datensatze haben in der Praxis die Problematik der fehlenden Werte in Beobachtungen (missing values, NA).
+
+## 1b)
+*Schatzen Sie, basierend auf a), ein geeignetes lineares Regressionsmodell. Beschranken Sie sich hierbei auf eine
+erklarende Variable. Stellen Sie ihr Modell graﬁsch mit einer roten Regressionsgeraden dar. Nutzen Sie die
+Funktion lm um ein lm-Objekt zu erstellen. Die Funktion abline nimmt auch solche Objekte als Argument
+an.*
+```{r}
+plot(data[, 1:4])
+```
+ 
+Es scheint starker positiver linearer Zusammenhang zwischen prestige und education zu geben.
+
+Einfaches lineares Regressionsmodell
+```{r}
+lin_reg <- lm(prestige ~ education, data = data)
+summary(lin_reg)
+
+```
+```{r}
+plot(prestige ~ education, data = data, main = "Einfaches lineares Modell")
+abline(lin_reg, col = "red")
+```
+
+
+## 1c)
+*Berechnen Sie die Parameterschatzer $β_0$ und $β_1$ mit der Kleinste-Quadrate-Methode.*
+
+```{r}
+y <- data$prestige
+x <- data$education
+n <- nrow(data)
+
+y_mean <- mean(y)
+x_mean <- mean(x)
+
+beta1 <- (sum(x*y) - n*x_mean*y_mean)/(sum(x^2) - n*x_mean^2)
+
+beta1
+lin_reg$coefficients[2]
+cov(data$prestige, data$education)/var(data$education)
+```
+```{r}
+beta0 <- (sum(x*y) - beta1*sum(x^2))/sum(x)
+
+beta0
+lin_reg$coefficients[1]
+y_mean - beta1*x_mean
+```
+## 1d)
+*Berechnen Sie die total sum of squares (SST), die explained sum of squares (SSE) und die residual sum of
+squares (SSR).*
+
+```{r}
+y_pred <- predict(lin_reg, data.frame(education=x))
+
+sst <- sum((y - y_mean)^2)
+sse <- sum((y_pred - y_mean)^2)
+ssr <- sum((y - y_pred)^2)
+
+sst
+sse
+ssr
+
+
+```
+
+## 1e)
+*Berechnen Sie das $R^2$ Ihres Modells.*
+```{r}
+sse/sst
+1 - ssr/sst
+```
+
+
+## 1f)
+*Was passiert mit den Parameterschatzern wenn Sie die abhangige Variable mit 2 multiplizieren? Wie verhalt sich in diesem Fall das $R^2$ des Modells?*
+
+```{r}
+lin_reg_mul <- lm(y ~ I(x*2))
+summary(lin_reg_mul)
+
+
+```
+
+Wenn die abhangige Variable mit 2 multipliziert wird, verandert sich $β_0$ nicht, $β_1$ wird 2-fach kleiner. $R^2$ verandert sich nicht.
+
+
+
