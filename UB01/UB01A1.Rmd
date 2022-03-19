@@ -223,13 +223,13 @@ sse/sst
 *Was passiert mit den Parameterschatzern wenn Sie die abhangige Variable mit 2 multiplizieren? Wie verhalt sich in diesem Fall das $R^2$ des Modells?*
 
 ```{r}
-lin_reg_mul <- lm(y ~ I(x*2))
+lin_reg_mul <- lm(y*2 ~ x)
 summary(lin_reg_mul)
 
 
 ```
 
-Wenn die abhangige Variable mit 2 multipliziert wird, verandert sich $β_0$ nicht, $β_1$ wird 2-fach kleiner. $R^2$ verandert sich nicht.
+Wenn die abhangige Variable mit 2 multipliziert wird, verdoppeln sich $β_0$ und $β_1$. $R^2$ verandert sich nicht.
 
 
 

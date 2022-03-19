@@ -518,27 +518,27 @@ sst</code></pre>
 <div id="f" class="section level2">
 <h2>1f)</h2>
 <p><em>Was passiert mit den Parameterschatzern wenn Sie die abhangige Variable mit 2 multiplizieren? Wie verhalt sich in diesem Fall das <span class="math inline">\(R^2\)</span> des Modells?</em></p>
-<pre class="r"><code>lin_reg_mul &lt;- lm(y ~ I(x*2))
+<pre class="r"><code>lin_reg_mul &lt;- lm(y*2 ~ x)
 summary(lin_reg_mul)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = y ~ I(x * 2))
+## lm(formula = y * 2 ~ x)
 ## 
 ## Residuals:
 ##     Min      1Q  Median      3Q     Max 
-## -21.605  -6.151   0.366   6.565  17.540 
+## -43.210 -12.301   0.732  13.130  35.081 
 ## 
 ## Coefficients:
 ##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept) -10.8409     3.5285  -3.072  0.00276 ** 
-## I(x * 2)      2.6942     0.1584  17.006  &lt; 2e-16 ***
+## (Intercept) -21.6817     7.0569  -3.072  0.00276 ** 
+## x            10.7768     0.6337  17.006  &lt; 2e-16 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 8.578 on 96 degrees of freedom
+## Residual standard error: 17.16 on 96 degrees of freedom
 ## Multiple R-squared:  0.7508, Adjusted R-squared:  0.7482 
 ## F-statistic: 289.2 on 1 and 96 DF,  p-value: &lt; 2.2e-16</code></pre>
-<p>Wenn die abhangige Variable mit 2 multipliziert wird, verandert sich <span class="math inline">\(β_0\)</span> nicht, <span class="math inline">\(β_1\)</span> wird 2-fach kleiner. <span class="math inline">\(R^2\)</span> verandert sich nicht.</p>
+<p>Wenn die abhangige Variable mit 2 multipliziert wird, verdoppeln sich <span class="math inline">\(β_0\)</span> und <span class="math inline">\(β_1\)</span>. <span class="math inline">\(R^2\)</span> verandert sich nicht.</p>
 </div>
 </div>
 
