@@ -1,0 +1,92 @@
+---
+title: "UB01"
+author: "Anatol"
+date: "3/19/2022"
+output:
+  html_document:
+    code_folding: hide
+    df_print: kable
+    fig_caption: yes
+    fig_height: 5
+    fig_width: 5
+    theme: united
+    self_contained: yes
+    toc: yes
+    toc_float: yes
+    toc_level: 3
+---
+
+```{r, include = FALSE}
+library(dplyr)
+library(magrittr)
+library(flair)
+library(pipeR)
+library(knitr)
+library(rmarkdown)
+library(shiny)
+library(shinyWidgets)
+library(arm)
+library(rAmCharts)
+library(xfun)
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color, 
+      x)
+  } else x
+}
+
+xfun::pkg_load2(c("htmltools", "mime"))
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{css, echo=FALSE}
+.description {
+  color: gray;
+  font-style: italics;
+```
+# Aufgabe 1: Einfache Regression
+
+```{r include=FALSE}
+library(car)
+```
+
+Deskription des Prestige-Datensatzes:
+```{r}
+summary(Prestige)
+str(Prestige)
+head(Prestige)
+```
+
+Bei der Variable type gibt es 4 NA's, die wir weglassen:
+```{r}
+data <- na.omit(Prestige)
+str(data)
+plot(data)
+```
+
+## 1a)
+
+*Analysieren Sie das Einkommen (income) in den verschiedenen Berufstypen (type). Unterscheiden sich die einzelnen Berufstypen hinsichtlich ihres Einkommens? Fallt Ihnen eine speziﬁsche Problematik auf, welche viele Datensatze in der Praxis haben?*
+
+```{r}
+plot(data)
+```
+
+Die Plots sind hisichtlich der Hauptachse spiegelverkehrt. 
+Prestige gegen Women: man kann keinen Zusammenhang im Scatterplot beobachten
+Prestige gegen Income: hier lässt sich ein positiver Zusammenhang beobachten: mehr Income, mehr Prestge
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
