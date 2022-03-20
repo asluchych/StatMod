@@ -407,7 +407,1108 @@ summary(multLinRegFull)</code></pre>
 ## Residual standard error: 0.7448 on 42 degrees of freedom
 ## Multiple R-squared:  0.7362, Adjusted R-squared:  0.6922 
 ## F-statistic: 16.74 on 7 and 42 DF,  p-value: 2.534e-10</code></pre>
+<p>Bestimmtheitsmaß betragt 0.7362; das adjustierte Bestimmtheitsmaß ist 0.6922.</p>
 </div>
+<div id="b" class="section level2">
+<h2>3b)</h2>
+<p><em>Welche der erklrenden Variablen sind zu einem Niveau von α = 0,05 statistisch signiﬁkant? Die hierfur notwendigen Schatzwerte konnen aus dem lm-Objekt mit dem summary-Befehl abgerufen werden. Uber die Funktion qt konnen Sie Quantile fur t-Verteilungen berechnen.</em></p>
+<p>Zu einem Niveau von α = 0,05 sind nur die Variablen Murder und HS Grad signifikant.</p>
+</div>
+<div id="c" class="section level2">
+<h2>3c)</h2>
+<p><em>Schauen Sie sich nun die Nullhypothese <span class="math inline">\(β_{Area} = 0\)</span> genauer an. Testen Sie auf zwei verschiedenen Wegen jenseits des einfachen t-Tests, ob die Nullhypothese zu einem Signiﬁkanzniveau von 5% verworfen werden kann. Nutzen Sie dazu die Funktionen confint und pt.</em></p>
+<pre class="r"><code>confint(multLinRegFull, &quot;Area&quot;)</code></pre>
+<pre><code>##              2.5 %       97.5 %
+## Area -3.440321e-06 3.292657e-06</code></pre>
+<pre class="r"><code>qt(.025, 42)</code></pre>
+<pre><code>## [1] -2.018082</code></pre>
+<pre class="r"><code>qt(.975, 42)</code></pre>
+<pre><code>## [1] 2.018082</code></pre>
+<p>Da das 95%-Konfidenzintervall 0 enthalt, kann die Nullhypothese <span class="math inline">\(β_Area = 0\)</span> nicht verworfen werden. Der Wert des Regressionkoeffizientes -7.383e-08 liegt nicht ausserhalb der 2.5% und 97.5% Grenzen, kann die Nullhypothese ebenso verworfen werden.</p>
+</div>
+<div id="d" class="section level2">
+<h2>3d)</h2>
+<p><em>Gehen Sie vom in Teilaufgabe a) geschtzten vollen Modell aus und testen Sie die Nullhypothese <span class="math inline">\(β_{Income} = β_{Illiteracy} = β_{Area} = 0\)</span> gegen die Alternativhypothese ”Mindestens einer dieser Parameter ist ungleich Null.“</em></p>
+<pre class="r"><code>linearHypothesis(multLinRegFull, c(&quot;Income=0&quot;, &quot;Illiteracy=0&quot;, &quot;Area=0&quot;))</code></pre>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="right">Res.Df</th>
+<th align="right">RSS</th>
+<th align="right">Df</th>
+<th align="right">Sum of Sq</th>
+<th align="right">F</th>
+<th align="right">Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">45</td>
+<td align="right">23.30804</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">42</td>
+<td align="right">23.29714</td>
+<td align="right">3</td>
+<td align="right">0.0109047</td>
+<td align="right">0.006553</td>
+<td align="right">0.9992586</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="r"><code>multLinRegRest &lt;- lm (`Life Exp` ~ Population + Murder + `HS Grad` + Frost, data = states)
+
+ssr_unr &lt;- sum(multLinRegFull$residuals^2)
+ssr_res &lt;- sum(multLinRegRest$residuals^2)
+
+F_score &lt;- ((ssr_res - ssr_unr)/(length(multLinRegFull$coefficients) - length(multLinRegRest$coefficients)))/(ssr_unr/(nrow(states) - length(multLinRegFull$coefficients)))
+F_score</code></pre>
+<pre><code>## [1] 0.00655296</code></pre>
+<pre class="r"><code>qf(.95, 42, 45)</code></pre>
+<pre><code>## [1] 1.652107</code></pre>
+<p>Die Nullhypothese <span class="math inline">\(β_{Income} = β_{Illiteracy} = β_{Area} = 0\)</span> kann zum Signifikanzniveau 5% nicht verworfen werden.</p>
+</div>
+<div id="e" class="section level2">
+<h2>3e)</h2>
+<p><em>Testen Sie nun, ob die Koeﬃzienten <span class="math inline">\(β_{Illiteracy} und β_{HS.Grad}\)</span> gleich sind. Nutzen Sie dazu bitte die Funktion linearHypothesis aus dem Paket car.</em></p>
+<pre class="r"><code>linearHypothesis(multLinRegFull, &quot;Illiteracy = `HS Grad`&quot;)</code></pre>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="right">Res.Df</th>
+<th align="right">RSS</th>
+<th align="right">Df</th>
+<th align="right">Sum of Sq</th>
+<th align="right">F</th>
+<th align="right">Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">43</td>
+<td align="right">23.29814</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+<td align="right">NA</td>
+</tr>
+<tr class="even">
+<td align="right">42</td>
+<td align="right">23.29714</td>
+<td align="right">1</td>
+<td align="right">0.0010034</td>
+<td align="right">0.0018089</td>
+<td align="right">0.9662771</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Die Hypothese, dass die Koeﬃzienten <span class="math inline">\(β_{Illiteracy} und β_{HS.Grad}\)</span> gleich sind, kann zum Signifikanzniveau 5% nicht verworfen werden.</p>
+</div>
+<div id="f" class="section level2">
+<h2>3f)</h2>
+<p><em>Berechnen Sie ein Modell in welchem Sie einen Interaktionsterm zwischen der Variable Income und Murder unterstellen.</em></p>
+<pre class="r"><code>multLinRegFull &lt;- lm (`Life Exp` ~ . + I(Income*Murder), data = states)
+summary(multLinRegFull)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = `Life Exp` ~ . + I(Income * Murder), data = states)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.25673 -0.48769  0.06232  0.49667  1.71842 
+## 
+## Coefficients:
+##                      Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         6.705e+01  3.009e+00  22.286   &lt;2e-16 ***
+## Population          5.864e-05  2.901e-05   2.021   0.0498 *  
+## Income              7.778e-04  5.614e-04   1.386   0.1734    
+## Illiteracy         -1.658e-01  3.816e-01  -0.434   0.6663    
+## Murder              1.746e-01  3.053e-01   0.572   0.5706    
+## `HS Grad`           5.421e-02  2.317e-02   2.340   0.0242 *  
+## Frost              -5.295e-03  3.102e-03  -1.707   0.0953 .  
+## Area                9.769e-07  1.770e-06   0.552   0.5840    
+## I(Income * Murder) -1.043e-04  6.618e-05  -1.576   0.1227    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.732 on 41 degrees of freedom
+## Multiple R-squared:  0.7512, Adjusted R-squared:  0.7027 
+## F-statistic: 15.48 on 8 and 41 DF,  p-value: 3.46e-10</code></pre>
+</div>
+</div>
+<div id="aufgabe-4-dummy-variablen" class="section level1">
+<h1>Aufgabe 4: Dummy-Variablen</h1>
+<p><em>Laden Sie den Prestige Datensatz aus der Aufgabe 1 nochmals ein und entfernen Sie die fehlenden Werte. Erstellen Sie dann ein multiples Regressionsmodell unter Verwendung der typen Variable. Wie sind die Variablen zu interpretieren, und was ist bei der Interpretation von Dummyvariablen zu beachten?</em></p>
+<pre class="r"><code>Prestige</code></pre>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">education</th>
+<th align="right">income</th>
+<th align="right">women</th>
+<th align="right">prestige</th>
+<th align="right">census</th>
+<th align="left">type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">gov.administrators</td>
+<td align="right">13.11</td>
+<td align="right">12351</td>
+<td align="right">11.16</td>
+<td align="right">68.8</td>
+<td align="right">1113</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">general.managers</td>
+<td align="right">12.26</td>
+<td align="right">25879</td>
+<td align="right">4.02</td>
+<td align="right">69.1</td>
+<td align="right">1130</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">accountants</td>
+<td align="right">12.77</td>
+<td align="right">9271</td>
+<td align="right">15.70</td>
+<td align="right">63.4</td>
+<td align="right">1171</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">purchasing.officers</td>
+<td align="right">11.42</td>
+<td align="right">8865</td>
+<td align="right">9.11</td>
+<td align="right">56.8</td>
+<td align="right">1175</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">chemists</td>
+<td align="right">14.62</td>
+<td align="right">8403</td>
+<td align="right">11.68</td>
+<td align="right">73.5</td>
+<td align="right">2111</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">physicists</td>
+<td align="right">15.64</td>
+<td align="right">11030</td>
+<td align="right">5.13</td>
+<td align="right">77.6</td>
+<td align="right">2113</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">biologists</td>
+<td align="right">15.09</td>
+<td align="right">8258</td>
+<td align="right">25.65</td>
+<td align="right">72.6</td>
+<td align="right">2133</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">architects</td>
+<td align="right">15.44</td>
+<td align="right">14163</td>
+<td align="right">2.69</td>
+<td align="right">78.1</td>
+<td align="right">2141</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">civil.engineers</td>
+<td align="right">14.52</td>
+<td align="right">11377</td>
+<td align="right">1.03</td>
+<td align="right">73.1</td>
+<td align="right">2143</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">mining.engineers</td>
+<td align="right">14.64</td>
+<td align="right">11023</td>
+<td align="right">0.94</td>
+<td align="right">68.8</td>
+<td align="right">2153</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">surveyors</td>
+<td align="right">12.39</td>
+<td align="right">5902</td>
+<td align="right">1.91</td>
+<td align="right">62.0</td>
+<td align="right">2161</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">draughtsmen</td>
+<td align="right">12.30</td>
+<td align="right">7059</td>
+<td align="right">7.83</td>
+<td align="right">60.0</td>
+<td align="right">2163</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">computer.programers</td>
+<td align="right">13.83</td>
+<td align="right">8425</td>
+<td align="right">15.33</td>
+<td align="right">53.8</td>
+<td align="right">2183</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">economists</td>
+<td align="right">14.44</td>
+<td align="right">8049</td>
+<td align="right">57.31</td>
+<td align="right">62.2</td>
+<td align="right">2311</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">psychologists</td>
+<td align="right">14.36</td>
+<td align="right">7405</td>
+<td align="right">48.28</td>
+<td align="right">74.9</td>
+<td align="right">2315</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">social.workers</td>
+<td align="right">14.21</td>
+<td align="right">6336</td>
+<td align="right">54.77</td>
+<td align="right">55.1</td>
+<td align="right">2331</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">lawyers</td>
+<td align="right">15.77</td>
+<td align="right">19263</td>
+<td align="right">5.13</td>
+<td align="right">82.3</td>
+<td align="right">2343</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">librarians</td>
+<td align="right">14.15</td>
+<td align="right">6112</td>
+<td align="right">77.10</td>
+<td align="right">58.1</td>
+<td align="right">2351</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">vocational.counsellors</td>
+<td align="right">15.22</td>
+<td align="right">9593</td>
+<td align="right">34.89</td>
+<td align="right">58.3</td>
+<td align="right">2391</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">ministers</td>
+<td align="right">14.50</td>
+<td align="right">4686</td>
+<td align="right">4.14</td>
+<td align="right">72.8</td>
+<td align="right">2511</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">university.teachers</td>
+<td align="right">15.97</td>
+<td align="right">12480</td>
+<td align="right">19.59</td>
+<td align="right">84.6</td>
+<td align="right">2711</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">primary.school.teachers</td>
+<td align="right">13.62</td>
+<td align="right">5648</td>
+<td align="right">83.78</td>
+<td align="right">59.6</td>
+<td align="right">2731</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">secondary.school.teachers</td>
+<td align="right">15.08</td>
+<td align="right">8034</td>
+<td align="right">46.80</td>
+<td align="right">66.1</td>
+<td align="right">2733</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">physicians</td>
+<td align="right">15.96</td>
+<td align="right">25308</td>
+<td align="right">10.56</td>
+<td align="right">87.2</td>
+<td align="right">3111</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">veterinarians</td>
+<td align="right">15.94</td>
+<td align="right">14558</td>
+<td align="right">4.32</td>
+<td align="right">66.7</td>
+<td align="right">3115</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">osteopaths.chiropractors</td>
+<td align="right">14.71</td>
+<td align="right">17498</td>
+<td align="right">6.91</td>
+<td align="right">68.4</td>
+<td align="right">3117</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">nurses</td>
+<td align="right">12.46</td>
+<td align="right">4614</td>
+<td align="right">96.12</td>
+<td align="right">64.7</td>
+<td align="right">3131</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">nursing.aides</td>
+<td align="right">9.45</td>
+<td align="right">3485</td>
+<td align="right">76.14</td>
+<td align="right">34.9</td>
+<td align="right">3135</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">physio.therapsts</td>
+<td align="right">13.62</td>
+<td align="right">5092</td>
+<td align="right">82.66</td>
+<td align="right">72.1</td>
+<td align="right">3137</td>
+<td align="left">prof</td>
+</tr>
+<tr class="even">
+<td align="left">pharmacists</td>
+<td align="right">15.21</td>
+<td align="right">10432</td>
+<td align="right">24.71</td>
+<td align="right">69.3</td>
+<td align="right">3151</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">medical.technicians</td>
+<td align="right">12.79</td>
+<td align="right">5180</td>
+<td align="right">76.04</td>
+<td align="right">67.5</td>
+<td align="right">3156</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">commercial.artists</td>
+<td align="right">11.09</td>
+<td align="right">6197</td>
+<td align="right">21.03</td>
+<td align="right">57.2</td>
+<td align="right">3314</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">radio.tv.announcers</td>
+<td align="right">12.71</td>
+<td align="right">7562</td>
+<td align="right">11.15</td>
+<td align="right">57.6</td>
+<td align="right">3337</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">athletes</td>
+<td align="right">11.44</td>
+<td align="right">8206</td>
+<td align="right">8.13</td>
+<td align="right">54.1</td>
+<td align="right">3373</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">secretaries</td>
+<td align="right">11.59</td>
+<td align="right">4036</td>
+<td align="right">97.51</td>
+<td align="right">46.0</td>
+<td align="right">4111</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">typists</td>
+<td align="right">11.49</td>
+<td align="right">3148</td>
+<td align="right">95.97</td>
+<td align="right">41.9</td>
+<td align="right">4113</td>
+<td align="left">wc</td>
+</tr>
+<tr class="odd">
+<td align="left">bookkeepers</td>
+<td align="right">11.32</td>
+<td align="right">4348</td>
+<td align="right">68.24</td>
+<td align="right">49.4</td>
+<td align="right">4131</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">tellers.cashiers</td>
+<td align="right">10.64</td>
+<td align="right">2448</td>
+<td align="right">91.76</td>
+<td align="right">42.3</td>
+<td align="right">4133</td>
+<td align="left">wc</td>
+</tr>
+<tr class="odd">
+<td align="left">computer.operators</td>
+<td align="right">11.36</td>
+<td align="right">4330</td>
+<td align="right">75.92</td>
+<td align="right">47.7</td>
+<td align="right">4143</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">shipping.clerks</td>
+<td align="right">9.17</td>
+<td align="right">4761</td>
+<td align="right">11.37</td>
+<td align="right">30.9</td>
+<td align="right">4153</td>
+<td align="left">wc</td>
+</tr>
+<tr class="odd">
+<td align="left">file.clerks</td>
+<td align="right">12.09</td>
+<td align="right">3016</td>
+<td align="right">83.19</td>
+<td align="right">32.7</td>
+<td align="right">4161</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">receptionsts</td>
+<td align="right">11.04</td>
+<td align="right">2901</td>
+<td align="right">92.86</td>
+<td align="right">38.7</td>
+<td align="right">4171</td>
+<td align="left">wc</td>
+</tr>
+<tr class="odd">
+<td align="left">mail.carriers</td>
+<td align="right">9.22</td>
+<td align="right">5511</td>
+<td align="right">7.62</td>
+<td align="right">36.1</td>
+<td align="right">4172</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">postal.clerks</td>
+<td align="right">10.07</td>
+<td align="right">3739</td>
+<td align="right">52.27</td>
+<td align="right">37.2</td>
+<td align="right">4173</td>
+<td align="left">wc</td>
+</tr>
+<tr class="odd">
+<td align="left">telephone.operators</td>
+<td align="right">10.51</td>
+<td align="right">3161</td>
+<td align="right">96.14</td>
+<td align="right">38.1</td>
+<td align="right">4175</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">collectors</td>
+<td align="right">11.20</td>
+<td align="right">4741</td>
+<td align="right">47.06</td>
+<td align="right">29.4</td>
+<td align="right">4191</td>
+<td align="left">wc</td>
+</tr>
+<tr class="odd">
+<td align="left">claim.adjustors</td>
+<td align="right">11.13</td>
+<td align="right">5052</td>
+<td align="right">56.10</td>
+<td align="right">51.1</td>
+<td align="right">4192</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">travel.clerks</td>
+<td align="right">11.43</td>
+<td align="right">6259</td>
+<td align="right">39.17</td>
+<td align="right">35.7</td>
+<td align="right">4193</td>
+<td align="left">wc</td>
+</tr>
+<tr class="odd">
+<td align="left">office.clerks</td>
+<td align="right">11.00</td>
+<td align="right">4075</td>
+<td align="right">63.23</td>
+<td align="right">35.6</td>
+<td align="right">4197</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">sales.supervisors</td>
+<td align="right">9.84</td>
+<td align="right">7482</td>
+<td align="right">17.04</td>
+<td align="right">41.5</td>
+<td align="right">5130</td>
+<td align="left">wc</td>
+</tr>
+<tr class="odd">
+<td align="left">commercial.travellers</td>
+<td align="right">11.13</td>
+<td align="right">8780</td>
+<td align="right">3.16</td>
+<td align="right">40.2</td>
+<td align="right">5133</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">sales.clerks</td>
+<td align="right">10.05</td>
+<td align="right">2594</td>
+<td align="right">67.82</td>
+<td align="right">26.5</td>
+<td align="right">5137</td>
+<td align="left">wc</td>
+</tr>
+<tr class="odd">
+<td align="left">newsboys</td>
+<td align="right">9.62</td>
+<td align="right">918</td>
+<td align="right">7.00</td>
+<td align="right">14.8</td>
+<td align="right">5143</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">service.station.attendant</td>
+<td align="right">9.93</td>
+<td align="right">2370</td>
+<td align="right">3.69</td>
+<td align="right">23.3</td>
+<td align="right">5145</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">insurance.agents</td>
+<td align="right">11.60</td>
+<td align="right">8131</td>
+<td align="right">13.09</td>
+<td align="right">47.3</td>
+<td align="right">5171</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">real.estate.salesmen</td>
+<td align="right">11.09</td>
+<td align="right">6992</td>
+<td align="right">24.44</td>
+<td align="right">47.1</td>
+<td align="right">5172</td>
+<td align="left">wc</td>
+</tr>
+<tr class="odd">
+<td align="left">buyers</td>
+<td align="right">11.03</td>
+<td align="right">7956</td>
+<td align="right">23.88</td>
+<td align="right">51.1</td>
+<td align="right">5191</td>
+<td align="left">wc</td>
+</tr>
+<tr class="even">
+<td align="left">firefighters</td>
+<td align="right">9.47</td>
+<td align="right">8895</td>
+<td align="right">0.00</td>
+<td align="right">43.5</td>
+<td align="right">6111</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">policemen</td>
+<td align="right">10.93</td>
+<td align="right">8891</td>
+<td align="right">1.65</td>
+<td align="right">51.6</td>
+<td align="right">6112</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">cooks</td>
+<td align="right">7.74</td>
+<td align="right">3116</td>
+<td align="right">52.00</td>
+<td align="right">29.7</td>
+<td align="right">6121</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">bartenders</td>
+<td align="right">8.50</td>
+<td align="right">3930</td>
+<td align="right">15.51</td>
+<td align="right">20.2</td>
+<td align="right">6123</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">funeral.directors</td>
+<td align="right">10.57</td>
+<td align="right">7869</td>
+<td align="right">6.01</td>
+<td align="right">54.9</td>
+<td align="right">6141</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">babysitters</td>
+<td align="right">9.46</td>
+<td align="right">611</td>
+<td align="right">96.53</td>
+<td align="right">25.9</td>
+<td align="right">6147</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">launderers</td>
+<td align="right">7.33</td>
+<td align="right">3000</td>
+<td align="right">69.31</td>
+<td align="right">20.8</td>
+<td align="right">6162</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">janitors</td>
+<td align="right">7.11</td>
+<td align="right">3472</td>
+<td align="right">33.57</td>
+<td align="right">17.3</td>
+<td align="right">6191</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">elevator.operators</td>
+<td align="right">7.58</td>
+<td align="right">3582</td>
+<td align="right">30.08</td>
+<td align="right">20.1</td>
+<td align="right">6193</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">farmers</td>
+<td align="right">6.84</td>
+<td align="right">3643</td>
+<td align="right">3.60</td>
+<td align="right">44.1</td>
+<td align="right">7112</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">farm.workers</td>
+<td align="right">8.60</td>
+<td align="right">1656</td>
+<td align="right">27.75</td>
+<td align="right">21.5</td>
+<td align="right">7182</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">rotary.well.drillers</td>
+<td align="right">8.88</td>
+<td align="right">6860</td>
+<td align="right">0.00</td>
+<td align="right">35.3</td>
+<td align="right">7711</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">bakers</td>
+<td align="right">7.54</td>
+<td align="right">4199</td>
+<td align="right">33.30</td>
+<td align="right">38.9</td>
+<td align="right">8213</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">slaughterers.1</td>
+<td align="right">7.64</td>
+<td align="right">5134</td>
+<td align="right">17.26</td>
+<td align="right">25.2</td>
+<td align="right">8215</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">slaughterers.2</td>
+<td align="right">7.64</td>
+<td align="right">5134</td>
+<td align="right">17.26</td>
+<td align="right">34.8</td>
+<td align="right">8215</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">canners</td>
+<td align="right">7.42</td>
+<td align="right">1890</td>
+<td align="right">72.24</td>
+<td align="right">23.2</td>
+<td align="right">8221</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">textile.weavers</td>
+<td align="right">6.69</td>
+<td align="right">4443</td>
+<td align="right">31.36</td>
+<td align="right">33.3</td>
+<td align="right">8267</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">textile.labourers</td>
+<td align="right">6.74</td>
+<td align="right">3485</td>
+<td align="right">39.48</td>
+<td align="right">28.8</td>
+<td align="right">8278</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">tool.die.makers</td>
+<td align="right">10.09</td>
+<td align="right">8043</td>
+<td align="right">1.50</td>
+<td align="right">42.5</td>
+<td align="right">8311</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">machinists</td>
+<td align="right">8.81</td>
+<td align="right">6686</td>
+<td align="right">4.28</td>
+<td align="right">44.2</td>
+<td align="right">8313</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">sheet.metal.workers</td>
+<td align="right">8.40</td>
+<td align="right">6565</td>
+<td align="right">2.30</td>
+<td align="right">35.9</td>
+<td align="right">8333</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">welders</td>
+<td align="right">7.92</td>
+<td align="right">6477</td>
+<td align="right">5.17</td>
+<td align="right">41.8</td>
+<td align="right">8335</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">auto.workers</td>
+<td align="right">8.43</td>
+<td align="right">5811</td>
+<td align="right">13.62</td>
+<td align="right">35.9</td>
+<td align="right">8513</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">aircraft.workers</td>
+<td align="right">8.78</td>
+<td align="right">6573</td>
+<td align="right">5.78</td>
+<td align="right">43.7</td>
+<td align="right">8515</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">electronic.workers</td>
+<td align="right">8.76</td>
+<td align="right">3942</td>
+<td align="right">74.54</td>
+<td align="right">50.8</td>
+<td align="right">8534</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">radio.tv.repairmen</td>
+<td align="right">10.29</td>
+<td align="right">5449</td>
+<td align="right">2.92</td>
+<td align="right">37.2</td>
+<td align="right">8537</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">sewing.mach.operators</td>
+<td align="right">6.38</td>
+<td align="right">2847</td>
+<td align="right">90.67</td>
+<td align="right">28.2</td>
+<td align="right">8563</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">auto.repairmen</td>
+<td align="right">8.10</td>
+<td align="right">5795</td>
+<td align="right">0.81</td>
+<td align="right">38.1</td>
+<td align="right">8581</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">aircraft.repairmen</td>
+<td align="right">10.10</td>
+<td align="right">7716</td>
+<td align="right">0.78</td>
+<td align="right">50.3</td>
+<td align="right">8582</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">railway.sectionmen</td>
+<td align="right">6.67</td>
+<td align="right">4696</td>
+<td align="right">0.00</td>
+<td align="right">27.3</td>
+<td align="right">8715</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">electrical.linemen</td>
+<td align="right">9.05</td>
+<td align="right">8316</td>
+<td align="right">1.34</td>
+<td align="right">40.9</td>
+<td align="right">8731</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">electricians</td>
+<td align="right">9.93</td>
+<td align="right">7147</td>
+<td align="right">0.99</td>
+<td align="right">50.2</td>
+<td align="right">8733</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">construction.foremen</td>
+<td align="right">8.24</td>
+<td align="right">8880</td>
+<td align="right">0.65</td>
+<td align="right">51.1</td>
+<td align="right">8780</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">carpenters</td>
+<td align="right">6.92</td>
+<td align="right">5299</td>
+<td align="right">0.56</td>
+<td align="right">38.9</td>
+<td align="right">8781</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">masons</td>
+<td align="right">6.60</td>
+<td align="right">5959</td>
+<td align="right">0.52</td>
+<td align="right">36.2</td>
+<td align="right">8782</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">house.painters</td>
+<td align="right">7.81</td>
+<td align="right">4549</td>
+<td align="right">2.46</td>
+<td align="right">29.9</td>
+<td align="right">8785</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">plumbers</td>
+<td align="right">8.33</td>
+<td align="right">6928</td>
+<td align="right">0.61</td>
+<td align="right">42.9</td>
+<td align="right">8791</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">construction.labourers</td>
+<td align="right">7.52</td>
+<td align="right">3910</td>
+<td align="right">1.09</td>
+<td align="right">26.5</td>
+<td align="right">8798</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">pilots</td>
+<td align="right">12.27</td>
+<td align="right">14032</td>
+<td align="right">0.58</td>
+<td align="right">66.1</td>
+<td align="right">9111</td>
+<td align="left">prof</td>
+</tr>
+<tr class="odd">
+<td align="left">train.engineers</td>
+<td align="right">8.49</td>
+<td align="right">8845</td>
+<td align="right">0.00</td>
+<td align="right">48.9</td>
+<td align="right">9131</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">bus.drivers</td>
+<td align="right">7.58</td>
+<td align="right">5562</td>
+<td align="right">9.47</td>
+<td align="right">35.9</td>
+<td align="right">9171</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">taxi.drivers</td>
+<td align="right">7.93</td>
+<td align="right">4224</td>
+<td align="right">3.59</td>
+<td align="right">25.1</td>
+<td align="right">9173</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">longshoremen</td>
+<td align="right">8.37</td>
+<td align="right">4753</td>
+<td align="right">0.00</td>
+<td align="right">26.1</td>
+<td align="right">9313</td>
+<td align="left">bc</td>
+</tr>
+<tr class="odd">
+<td align="left">typesetters</td>
+<td align="right">10.00</td>
+<td align="right">6462</td>
+<td align="right">13.58</td>
+<td align="right">42.2</td>
+<td align="right">9511</td>
+<td align="left">bc</td>
+</tr>
+<tr class="even">
+<td align="left">bookbinders</td>
+<td align="right">8.55</td>
+<td align="right">3617</td>
+<td align="right">70.87</td>
+<td align="right">35.2</td>
+<td align="right">9517</td>
+<td align="left">bc</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="r"><code>prest_data &lt;- na.omit(Prestige)
+multLinRegPrest &lt;- lm(prestige ~ education + income + women + type, data = prest_data)
+summary(multLinRegPrest)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = prestige ~ education + income + women + type, data = prest_data)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -14.7485  -4.4817   0.3119   5.2478  18.4978 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -0.8139032  5.3311558  -0.153 0.878994    
+## education    3.6623557  0.6458300   5.671 1.63e-07 ***
+## income       0.0010428  0.0002623   3.976 0.000139 ***
+## women        0.0064434  0.0303781   0.212 0.832494    
+## typeprof     5.9051970  3.9377001   1.500 0.137127    
+## typewc      -2.9170720  2.6653961  -1.094 0.276626    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 7.132 on 92 degrees of freedom
+## Multiple R-squared:  0.8349, Adjusted R-squared:  0.826 
+## F-statistic: 93.07 on 5 and 92 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Professionelle haben c.p. um 5.9 mehr Prestigepunkte als Blue-Collar-Arbeiter. White-Collar-Worker haben c.p. um 2.9 weniger Prestigepunkte als Blue-Collar-Arbeiter. Bei der Interpretation von Dummyvariablen ist die Referenzkategorie zu beachten.</p>
 </div>
 
 

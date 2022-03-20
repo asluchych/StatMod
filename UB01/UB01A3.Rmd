@@ -28,6 +28,7 @@ library(shinyWidgets)
 library(arm)
 library(rAmCharts)
 library(xfun)
+library(car)
 colorize <- function(x, color) {
   if (knitr::is_latex_output()) {
     sprintf("\\textcolor{%s}{%s}", color, x)
@@ -69,5 +70,74 @@ multLinRegFull <- lm (`Life Exp` ~ ., data = states)
 summary(multLinRegFull)
 ```
 
-Bestimmtheitsmaß betragt 0.7362; das adjustierte Bestimmtheitsmaß 0.6922 
+Bestimmtheitsmaß betragt 0.7362; das adjustierte Bestimmtheitsmaß ist 0.6922.  
+
+## 3b)
+*Welche der erklrenden Variablen sind zu einem Niveau von α = 0,05 statistisch signiﬁkant? Die hierfur notwendigen Schatzwerte konnen aus dem lm-Objekt mit dem summary-Befehl abgerufen werden. Uber die
+Funktion qt konnen Sie Quantile fur t-Verteilungen berechnen.*
+
+
+Zu einem Niveau von α = 0,05 sind nur die Variablen Murder und HS Grad signifikant.
+
+## 3c)
+
+*Schauen Sie sich nun die Nullhypothese $β_{Area} = 0$ genauer an. Testen Sie auf zwei verschiedenen Wegen jenseits des einfachen t-Tests, ob die Nullhypothese zu einem Signiﬁkanzniveau von 5% verworfen werden kann. Nutzen Sie dazu die Funktionen confint und pt.*
+
+```{r}
+confint(multLinRegFull, "Area")
+qt(.025, 42)
+qt(.975, 42)
+```
+Da das 95%-Konfidenzintervall 0 enthalt, kann die Nullhypothese  $β_Area = 0$ nicht verworfen werden. Der Wert des Regressionkoeffizientes -7.383e-08 liegt nicht ausserhalb der 2.5% und 97.5% Grenzen, kann die Nullhypothese ebenso verworfen werden.
+
+## 3d)
+
+*Gehen Sie vom in Teilaufgabe a) geschtzten vollen Modell aus und testen Sie die Nullhypothese $β_{Income} = β_{Illiteracy} = β_{Area} = 0$ gegen die Alternativhypothese ”Mindestens einer dieser Parameter ist ungleich Null.“*
+
+```{r}
+linearHypothesis(multLinRegFull, c("Income=0", "Illiteracy=0", "Area=0"))
+
+multLinRegRest <- lm (`Life Exp` ~ Population + Murder + `HS Grad` + Frost, data = states)
+
+ssr_unr <- sum(multLinRegFull$residuals^2)
+ssr_res <- sum(multLinRegRest$residuals^2)
+
+F_score <- ((ssr_res - ssr_unr)/(length(multLinRegFull$coefficients) - length(multLinRegRest$coefficients)))/(ssr_unr/(nrow(states) - length(multLinRegFull$coefficients)))
+F_score
+qf(.95, 42, 45)
+
+```
+Die Nullhypothese $β_{Income} = β_{Illiteracy} = β_{Area} = 0$ kann zum Signifikanzniveau 5% nicht verworfen werden.
+
+## 3e)
+
+*Testen Sie nun, ob die Koeﬃzienten $β_{Illiteracy} und β_{HS.Grad}$ gleich sind. Nutzen Sie dazu bitte die Funktion linearHypothesis aus dem Paket car.*
+
+```{r}
+linearHypothesis(multLinRegFull, "Illiteracy = `HS Grad`")
+```
+Die Hypothese, dass die Koeﬃzienten $β_{Illiteracy} und β_{HS.Grad}$ gleich sind, kann zum Signifikanzniveau 5% nicht verworfen werden.
+
+## 3f)
+
+*Berechnen Sie ein Modell in welchem Sie einen Interaktionsterm zwischen der Variable Income und Murder unterstellen.*
+```{r}
+multLinRegFull <- lm (`Life Exp` ~ . + I(Income*Murder), data = states)
+summary(multLinRegFull)
+```
+
+# Aufgabe 4: Dummy-Variablen
+
+*Laden Sie den Prestige Datensatz aus der Aufgabe 1 nochmals ein und entfernen Sie die fehlenden Werte. Erstellen Sie dann ein multiples Regressionsmodell unter Verwendung der typen Variable. Wie sind die Variablen zu interpretieren, und was ist bei der Interpretation von Dummyvariablen zu beachten?*
+
+```{r}
+Prestige
+prest_data <- na.omit(Prestige)
+multLinRegPrest <- lm(prestige ~ education + income + women + type, data = prest_data)
+summary(multLinRegPrest)
+```
+Professionelle haben c.p. um 5.9 mehr Prestigepunkte als Blue-Collar-Arbeiter. White-Collar-Worker haben c.p. um 2.9 weniger Prestigepunkte als Blue-Collar-Arbeiter. Bei der Interpretation von Dummyvariablen ist die Referenzkategorie zu beachten.
+
+
+
 
