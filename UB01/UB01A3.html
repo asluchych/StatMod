@@ -264,6 +264,151 @@ div.tocify {
   color: gray;
   font-style: italics;
 </style>
+<div id="aufgabe-3-mehrfachregression" class="section level1">
+<h1>Aufgabe 3: Mehrfachregression</h1>
+<pre class="r"><code>states &lt;- as.data.frame(state.x77)
+head(states)</code></pre>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">Population</th>
+<th align="right">Income</th>
+<th align="right">Illiteracy</th>
+<th align="right">Life Exp</th>
+<th align="right">Murder</th>
+<th align="right">HS Grad</th>
+<th align="right">Frost</th>
+<th align="right">Area</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Alabama</td>
+<td align="right">3615</td>
+<td align="right">3624</td>
+<td align="right">2.1</td>
+<td align="right">69.05</td>
+<td align="right">15.1</td>
+<td align="right">41.3</td>
+<td align="right">20</td>
+<td align="right">50708</td>
+</tr>
+<tr class="even">
+<td align="left">Alaska</td>
+<td align="right">365</td>
+<td align="right">6315</td>
+<td align="right">1.5</td>
+<td align="right">69.31</td>
+<td align="right">11.3</td>
+<td align="right">66.7</td>
+<td align="right">152</td>
+<td align="right">566432</td>
+</tr>
+<tr class="odd">
+<td align="left">Arizona</td>
+<td align="right">2212</td>
+<td align="right">4530</td>
+<td align="right">1.8</td>
+<td align="right">70.55</td>
+<td align="right">7.8</td>
+<td align="right">58.1</td>
+<td align="right">15</td>
+<td align="right">113417</td>
+</tr>
+<tr class="even">
+<td align="left">Arkansas</td>
+<td align="right">2110</td>
+<td align="right">3378</td>
+<td align="right">1.9</td>
+<td align="right">70.66</td>
+<td align="right">10.1</td>
+<td align="right">39.9</td>
+<td align="right">65</td>
+<td align="right">51945</td>
+</tr>
+<tr class="odd">
+<td align="left">California</td>
+<td align="right">21198</td>
+<td align="right">5114</td>
+<td align="right">1.1</td>
+<td align="right">71.71</td>
+<td align="right">10.3</td>
+<td align="right">62.6</td>
+<td align="right">20</td>
+<td align="right">156361</td>
+</tr>
+<tr class="even">
+<td align="left">Colorado</td>
+<td align="right">2541</td>
+<td align="right">4884</td>
+<td align="right">0.7</td>
+<td align="right">72.06</td>
+<td align="right">6.8</td>
+<td align="right">63.9</td>
+<td align="right">166</td>
+<td align="right">103766</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="r"><code>str(states)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    50 obs. of  8 variables:
+##  $ Population: num  3615 365 2212 2110 21198 ...
+##  $ Income    : num  3624 6315 4530 3378 5114 ...
+##  $ Illiteracy: num  2.1 1.5 1.8 1.9 1.1 0.7 1.1 0.9 1.3 2 ...
+##  $ Life Exp  : num  69 69.3 70.5 70.7 71.7 ...
+##  $ Murder    : num  15.1 11.3 7.8 10.1 10.3 6.8 3.1 6.2 10.7 13.9 ...
+##  $ HS Grad   : num  41.3 66.7 58.1 39.9 62.6 63.9 56 54.6 52.6 40.6 ...
+##  $ Frost     : num  20 152 15 65 20 166 139 103 11 60 ...
+##  $ Area      : num  50708 566432 113417 51945 156361 ...</code></pre>
+<pre class="r"><code>summary(states)</code></pre>
+<pre><code>##    Population        Income       Illiteracy       Life Exp    
+##  Min.   :  365   Min.   :3098   Min.   :0.500   Min.   :67.96  
+##  1st Qu.: 1080   1st Qu.:3993   1st Qu.:0.625   1st Qu.:70.12  
+##  Median : 2838   Median :4519   Median :0.950   Median :70.67  
+##  Mean   : 4246   Mean   :4436   Mean   :1.170   Mean   :70.88  
+##  3rd Qu.: 4968   3rd Qu.:4814   3rd Qu.:1.575   3rd Qu.:71.89  
+##  Max.   :21198   Max.   :6315   Max.   :2.800   Max.   :73.60  
+##      Murder          HS Grad          Frost             Area       
+##  Min.   : 1.400   Min.   :37.80   Min.   :  0.00   Min.   :  1049  
+##  1st Qu.: 4.350   1st Qu.:48.05   1st Qu.: 66.25   1st Qu.: 36985  
+##  Median : 6.850   Median :53.25   Median :114.50   Median : 54277  
+##  Mean   : 7.378   Mean   :53.11   Mean   :104.46   Mean   : 70736  
+##  3rd Qu.:10.675   3rd Qu.:59.15   3rd Qu.:139.75   3rd Qu.: 81163  
+##  Max.   :15.100   Max.   :67.30   Max.   :188.00   Max.   :566432</code></pre>
+<div id="a" class="section level2">
+<h2>3a)</h2>
+<p><em>Passen Sie zunachst das volle Modell an, d.h. regressieren Sie Life.Exp auf alle im Datensatz vorhandenen restlichen Variablen. Vermeiden Sie bitte den Befehlattach. Wie hoch ist das Bestimmtheitsmaß und das adjustierte Bestimmtheitsmaß?</em></p>
+<pre class="r"><code>multLinRegFull &lt;- lm (`Life Exp` ~ ., data = states)
+summary(multLinRegFull)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = `Life Exp` ~ ., data = states)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.48895 -0.51232 -0.02747  0.57002  1.49447 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  7.094e+01  1.748e+00  40.586  &lt; 2e-16 ***
+## Population   5.180e-05  2.919e-05   1.775   0.0832 .  
+## Income      -2.180e-05  2.444e-04  -0.089   0.9293    
+## Illiteracy   3.382e-02  3.663e-01   0.092   0.9269    
+## Murder      -3.011e-01  4.662e-02  -6.459 8.68e-08 ***
+## `HS Grad`    4.893e-02  2.332e-02   2.098   0.0420 *  
+## Frost       -5.735e-03  3.143e-03  -1.825   0.0752 .  
+## Area        -7.383e-08  1.668e-06  -0.044   0.9649    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.7448 on 42 degrees of freedom
+## Multiple R-squared:  0.7362, Adjusted R-squared:  0.6922 
+## F-statistic: 16.74 on 7 and 42 DF,  p-value: 2.534e-10</code></pre>
+</div>
+</div>
 
 
 

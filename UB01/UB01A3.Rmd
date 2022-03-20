@@ -49,3 +49,25 @@ knitr::opts_chunk$set(echo = TRUE)
   color: gray;
   font-style: italics;
 ```
+# Aufgabe 3: Mehrfachregression  
+
+```{r}
+states <- as.data.frame(state.x77)
+head(states)
+str(states)
+summary(states)
+
+```
+
+
+## 3a)
+*Passen Sie zunachst das volle Modell an, d.h. regressieren Sie Life.Exp auf alle im Datensatz vorhandenen restlichen Variablen. Vermeiden Sie bitte den Befehlattach. Wie hoch ist das Bestimmtheitsmaß und das
+adjustierte Bestimmtheitsmaß?*
+
+```{r}
+multLinRegFull <- lm (`Life Exp` ~ ., data = states)
+summary(multLinRegFull)
+```
+
+Bestimmtheitsmaß betragt 0.7362; das adjustierte Bestimmtheitsmaß 0.6922 
+
