@@ -231,5 +231,32 @@ summary(lin_reg_mul)
 
 Wenn die abhangige Variable mit 2 multipliziert wird, verdoppeln sich $β_0$ und $β_1$. $R^2$ verandert sich nicht.
 
+# Aufgabe 2: Modellannahmen
+
+Annahmen 1) $E(ε_i|x_i) = 0$ und 2) $Var(ε_i|x_i) = σ_ε^2$ konnen mit Hilfe von Tukey-Anscombe-Plots gepruft werden: Residuen (Ordinate) geplottet gegen die geschatzten Werte der endogenen Variablen (Abszisse).
+
+```{r}
+plot(lin_reg$residuals ~ lin_reg$fitted.values, xlab = "fitted", ylab = "residuals")
+abline(h = 0, col = "red")
+```
+Die Residuen scheinen im Mittelwert 0 zu sein und eine konstante Variation aufzuweisen; die Annahmen 1) und 2) sind somit erfullt.  
+
+Annahme 3) $Cov(ε_i, ε_j|x_i) = 0 ∀ i ≠ j$: Die Residuen werden gegen die Zeit (bzw. den Lauﬁndex der Beobachtungen) geplottet.
+
+```{r}
+plot(lin_reg$residuals, ylab = "residuals")
+```
+
+Es lasst sich keine Systematik in den Residuals beobachten; Annahme 3 ist auch erfullt.
+
+Annahme 4 $ε_i|x_i ∼ N(0, σ_ε^2)$ wird durch einen Quantil-Quantil-Plot uberpruft (Q-Q-Plot). Hierbei werden die Quantile der Residuen gegen
+die theoretischen N(0, 1)-Quantile geplottet. 
+```{r}
+qqnorm(lin_reg$residuals)
+qqline(lin_reg$residuals)
+```
+
+Da die Punkte nicht immer auf der Geraden liegen, kann man davon ausgehen, dass die Annahme 4) verletzt ist.
+
 
 
