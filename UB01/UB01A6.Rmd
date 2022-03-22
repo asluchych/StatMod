@@ -50,3 +50,77 @@ knitr::opts_chunk$set(echo = TRUE)
   color: gray;
   font-style: italics;
 ```
+
+# Aufgabe 6
+
+```{r}
+psycho <- read.delim("psycho.txt", sep = " ")
+head(psycho)
+str(psycho)
+summary(psycho)
+```
+
+## 6a)
+*Schauen Sie sich den Datensatz genauer an. Deﬁnieren Sie die kategorialen Variablen als factor.*
+
+```{r}
+psycho$sex <- as.factor(psycho$sex)
+str(psycho)
+
+```
+
+## 6b)
+*Gehen Sie vom vollen Modell aus (ohne Interaktionsterme) und wenden Sie die Ruckwartselimination auf das Modell an. D.h. passen Sie das Modell an und eliminieren Sie dann die Variable mit dem hochsten p-Wert
+uber dem gewahlten Signiﬁkanzniveau (5%). Wiederholen Sie diese Vorgehensweise so lange, bis nur noch Variablen mit signiﬁkanten Parametern im Modell enthalten sind. Welches beste Modell erhalten Sie?*
+```{r}
+linReg10 <- lm(gpa ~ ., data = psycho)
+summary(linReg10)
+
+linReg9 <- lm(gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c4 + c5, data = psycho)
+summary(linReg9)
+
+linReg8 <- lm(gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c5, data = psycho)
+summary(linReg8)
+
+linReg7 <- lm(gpa ~ iq + alter + sex + total + c1 + c2 + c5, data = psycho)
+summary
+
+linReg6 <- lm(gpa ~ iq + sex + total + c1 + c2 + c5, data = psycho)
+summary(linReg6)
+
+linReg5 <- lm(gpa ~ iq + sex + c1 + c2 + c5, data = psycho)
+summary(linReg5)
+
+linReg4 <- lm(gpa ~ iq + sex + c2 + c5, data = psycho)
+summary(linReg4)
+
+linReg3 <- lm(gpa ~ iq + sex + c2, data = psycho)
+summary(linReg3)
+```
+
+Das beste Modell ist gpa = $β_0 + β_1*iq + β_2*sex + β_3*c2$ mit $R^2$ gleich 0.5375.
+
+## 6c)
+*Wenden Sie nun die schrittweise Selektion mit dem AIC (Funktion stepAIC aus dem Paket MASS in R) auf den Datensatz an. Achten Sie darauf, dass Sie die Argumente der Funktion stepAIC richtig deﬁnieren. Verwenden Sie dabei zunachst das volle Modell und dann das Nullmodell als Ausgangsmodell.*
+
+```{r}
+stepAIC(linReg10, direction = "backward")
+```
+
+Schrittweise Selektion (AIC): das volle Modell als Ausgangsmodell: $gpa = β_0 + β_1*iq + β_2*alter + β_3*sex + β_4*total + β_5*c1 + β_6*c2 + β_7*c3 + β_8*c5$
+
+```{r}
+linReg0 <- lm(gpa ~ 1, data = psycho)
+stepAIC(linReg0, direction = "forward", scope = formula(linReg10))
+
+```
+Schrittweise Selektion (AIC): das Nullmodell als Ausgangsmodell: $gpa = β_0 + β_1*iq + β_2*alter + β_3*sex + β_4*c1 + β_5*c2 + β_6*c5$
+
+## 6d)
+*Vergleichen Sie nun Ihr Ergebnis aus c) mit einer schrittweisen Selektion basierend auf dem BIC (und dem vollen Modell als Ausgangsmodell). Schauen Sie sich in der zugehorigen Hilfedatei mogliche Argumente der Funktion an. Die Funktion nobs macht Ihnen hier das Leben leichter. Hatten Sie das Ergebnis so erwartet?*
+```{r}
+step(linReg10, direction = "backward", k = log(nrow(psycho)))
+```
+
+Schrittweise Selektion (BIC): das volle Modell als Ausgangsmodell: $gpa = β_0 + β_1*iq + β_2*sex + β_3*c2$. 
+Das Ergebnis war so zu erwarten, weil AIC Modelle mit vielen Regressoren bevorzugt.

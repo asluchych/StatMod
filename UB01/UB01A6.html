@@ -264,6 +264,631 @@ div.tocify {
   color: gray;
   font-style: italics;
 </style>
+<div id="aufgabe-6" class="section level1">
+<h1>Aufgabe 6</h1>
+<pre class="r"><code>psycho &lt;- read.delim(&quot;psycho.txt&quot;, sep = &quot; &quot;)
+head(psycho)</code></pre>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="right">gpa</th>
+<th align="right">iq</th>
+<th align="right">alter</th>
+<th align="right">sex</th>
+<th align="right">total</th>
+<th align="right">c1</th>
+<th align="right">c2</th>
+<th align="right">c3</th>
+<th align="right">c4</th>
+<th align="right">c5</th>
+<th align="right">c6</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">7.940</td>
+<td align="right">111</td>
+<td align="right">13</td>
+<td align="right">2</td>
+<td align="right">67</td>
+<td align="right">15</td>
+<td align="right">17</td>
+<td align="right">13</td>
+<td align="right">13</td>
+<td align="right">11</td>
+<td align="right">9</td>
+</tr>
+<tr class="even">
+<td align="right">8.292</td>
+<td align="right">107</td>
+<td align="right">12</td>
+<td align="right">2</td>
+<td align="right">43</td>
+<td align="right">12</td>
+<td align="right">12</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">6</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="right">4.643</td>
+<td align="right">100</td>
+<td align="right">13</td>
+<td align="right">2</td>
+<td align="right">52</td>
+<td align="right">11</td>
+<td align="right">10</td>
+<td align="right">5</td>
+<td align="right">8</td>
+<td align="right">9</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="right">7.470</td>
+<td align="right">107</td>
+<td align="right">12</td>
+<td align="right">2</td>
+<td align="right">66</td>
+<td align="right">14</td>
+<td align="right">15</td>
+<td align="right">11</td>
+<td align="right">11</td>
+<td align="right">9</td>
+<td align="right">9</td>
+</tr>
+<tr class="odd">
+<td align="right">8.882</td>
+<td align="right">114</td>
+<td align="right">12</td>
+<td align="right">1</td>
+<td align="right">58</td>
+<td align="right">14</td>
+<td align="right">15</td>
+<td align="right">10</td>
+<td align="right">12</td>
+<td align="right">11</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="right">7.585</td>
+<td align="right">115</td>
+<td align="right">12</td>
+<td align="right">2</td>
+<td align="right">51</td>
+<td align="right">14</td>
+<td align="right">11</td>
+<td align="right">7</td>
+<td align="right">8</td>
+<td align="right">6</td>
+<td align="right">9</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="r"><code>str(psycho)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    78 obs. of  11 variables:
+##  $ gpa  : num  7.94 8.29 4.64 7.47 8.88 ...
+##  $ iq   : int  111 107 100 107 114 115 111 97 100 112 ...
+##  $ alter: int  13 12 13 12 12 12 13 13 13 13 ...
+##  $ sex  : int  2 2 2 2 1 2 2 2 1 2 ...
+##  $ total: int  67 43 52 66 58 51 71 51 49 51 ...
+##  $ c1   : int  15 12 11 14 14 14 15 10 12 15 ...
+##  $ c2   : int  17 12 10 15 15 11 17 12 9 16 ...
+##  $ c3   : int  13 7 5 11 10 7 12 5 6 4 ...
+##  $ c4   : int  13 7 8 11 12 8 14 11 9 9 ...
+##  $ c5   : int  11 6 9 9 11 6 11 5 6 5 ...
+##  $ c6   : int  9 6 7 9 6 9 10 6 7 8 ...</code></pre>
+<pre class="r"><code>summary(psycho)</code></pre>
+<pre><code>##       gpa               iq            alter            sex       
+##  Min.   : 0.530   Min.   : 72.0   Min.   :12.00   Min.   :1.000  
+##  1st Qu.: 6.278   1st Qu.:103.0   1st Qu.:12.00   1st Qu.:1.000  
+##  Median : 7.829   Median :110.0   Median :13.00   Median :2.000  
+##  Mean   : 7.447   Mean   :108.9   Mean   :12.74   Mean   :1.603  
+##  3rd Qu.: 8.983   3rd Qu.:117.5   3rd Qu.:13.00   3rd Qu.:2.000  
+##  Max.   :10.760   Max.   :136.0   Max.   :15.00   Max.   :2.000  
+##      total             c1              c2              c3        
+##  Min.   :20.00   Min.   : 4.00   Min.   : 2.00   Min.   : 1.000  
+##  1st Qu.:51.00   1st Qu.:12.00   1st Qu.:11.00   1st Qu.: 6.000  
+##  Median :59.50   Median :14.00   Median :13.00   Median : 8.000  
+##  Mean   :56.96   Mean   :13.03   Mean   :12.54   Mean   : 8.115  
+##  3rd Qu.:66.00   3rd Qu.:15.00   3rd Qu.:15.75   3rd Qu.:11.000  
+##  Max.   :80.00   Max.   :16.00   Max.   :17.00   Max.   :13.000  
+##        c4               c5               c6        
+##  Min.   : 2.000   Min.   : 1.000   Min.   : 1.000  
+##  1st Qu.: 8.000   1st Qu.: 6.000   1st Qu.: 7.000  
+##  Median :10.500   Median : 9.000   Median : 8.500  
+##  Mean   : 9.795   Mean   : 7.936   Mean   : 8.051  
+##  3rd Qu.:12.000   3rd Qu.:10.000   3rd Qu.:10.000  
+##  Max.   :14.000   Max.   :12.000   Max.   :10.000</code></pre>
+<div id="a" class="section level2">
+<h2>6a)</h2>
+<p><em>Schauen Sie sich den Datensatz genauer an. Deﬁnieren Sie die kategorialen Variablen als factor.</em></p>
+<pre class="r"><code>psycho$sex &lt;- as.factor(psycho$sex)
+str(psycho)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    78 obs. of  11 variables:
+##  $ gpa  : num  7.94 8.29 4.64 7.47 8.88 ...
+##  $ iq   : int  111 107 100 107 114 115 111 97 100 112 ...
+##  $ alter: int  13 12 13 12 12 12 13 13 13 13 ...
+##  $ sex  : Factor w/ 2 levels &quot;1&quot;,&quot;2&quot;: 2 2 2 2 1 2 2 2 1 2 ...
+##  $ total: int  67 43 52 66 58 51 71 51 49 51 ...
+##  $ c1   : int  15 12 11 14 14 14 15 10 12 15 ...
+##  $ c2   : int  17 12 10 15 15 11 17 12 9 16 ...
+##  $ c3   : int  13 7 5 11 10 7 12 5 6 4 ...
+##  $ c4   : int  13 7 8 11 12 8 14 11 9 9 ...
+##  $ c5   : int  11 6 9 9 11 6 11 5 6 5 ...
+##  $ c6   : int  9 6 7 9 6 9 10 6 7 8 ...</code></pre>
+</div>
+<div id="b" class="section level2">
+<h2>6b)</h2>
+<p><em>Gehen Sie vom vollen Modell aus (ohne Interaktionsterme) und wenden Sie die Ruckwartselimination auf das Modell an. D.h. passen Sie das Modell an und eliminieren Sie dann die Variable mit dem hochsten p-Wert uber dem gewahlten Signiﬁkanzniveau (5%). Wiederholen Sie diese Vorgehensweise so lange, bis nur noch Variablen mit signiﬁkanten Parametern im Modell enthalten sind. Welches beste Modell erhalten Sie?</em></p>
+<pre class="r"><code>linReg10 &lt;- lm(gpa ~ ., data = psycho)
+summary(linReg10)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gpa ~ ., data = psycho)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.7041 -0.5908  0.1236  0.8978  2.6421 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2.520984   4.643587   0.543   0.5890    
+## iq           0.073391   0.017552   4.181  8.6e-05 ***
+## alter       -0.410206   0.292001  -1.405   0.1647    
+## sex2        -0.575293   0.394721  -1.457   0.1497    
+## total       -0.066639   0.058707  -1.135   0.2604    
+## c1           0.188234   0.111042   1.695   0.0947 .  
+## c2           0.128614   0.089070   1.444   0.1534    
+## c3           0.122059   0.095523   1.278   0.2057    
+## c4          -0.003139   0.113448  -0.028   0.9780    
+## c5           0.142544   0.106541   1.338   0.1854    
+## c6           0.018150   0.167195   0.109   0.9139    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.441 on 67 degrees of freedom
+## Multiple R-squared:  0.5903, Adjusted R-squared:  0.5291 
+## F-statistic: 9.653 on 10 and 67 DF,  p-value: 9.589e-10</code></pre>
+<pre class="r"><code>linReg9 &lt;- lm(gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c4 + c5, data = psycho)
+summary(linReg9)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gpa ~ iq + alter + sex + total + c1 + c2 + c3 + 
+##     c4 + c5, data = psycho)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.7075 -0.5835  0.1244  0.8817  2.6452 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2.475777   4.591146   0.539   0.5915    
+## iq           0.073431   0.017420   4.215 7.53e-05 ***
+## alter       -0.406251   0.287606  -1.413   0.1624    
+## sex2        -0.573147   0.391351  -1.465   0.1477    
+## total       -0.064410   0.054597  -1.180   0.2422    
+## c1           0.188595   0.110183   1.712   0.0915 .  
+## c2           0.126150   0.085501   1.475   0.1447    
+## c3           0.123776   0.093518   1.324   0.1901    
+## c4          -0.001818   0.111971  -0.016   0.9871    
+## c5           0.143497   0.105404   1.361   0.1779    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.43 on 68 degrees of freedom
+## Multiple R-squared:  0.5902, Adjusted R-squared:  0.536 
+## F-statistic: 10.88 on 9 and 68 DF,  p-value: 2.8e-10</code></pre>
+<pre class="r"><code>linReg8 &lt;- lm(gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c5, data = psycho)
+summary(linReg8)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gpa ~ iq + alter + sex + total + c1 + c2 + c3 + 
+##     c5, data = psycho)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.7082 -0.5840  0.1278  0.8815  2.6435 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  2.47444    4.55704   0.543   0.5889    
+## iq           0.07353    0.01629   4.515 2.54e-05 ***
+## alter       -0.40666    0.28440  -1.430   0.1573    
+## sex2        -0.57486    0.37418  -1.536   0.1290    
+## total       -0.06493    0.04378  -1.483   0.1426    
+## c1           0.18922    0.10256   1.845   0.0693 .  
+## c2           0.12618    0.08485   1.487   0.1416    
+## c3           0.12419    0.08927   1.391   0.1686    
+## c5           0.14316    0.10254   1.396   0.1672    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.42 on 69 degrees of freedom
+## Multiple R-squared:  0.5902, Adjusted R-squared:  0.5427 
+## F-statistic: 12.42 on 8 and 69 DF,  p-value: 7.587e-11</code></pre>
+<pre class="r"><code>linReg7 &lt;- lm(gpa ~ iq + alter + sex + total + c1 + c2 + c5, data = psycho)
+summary</code></pre>
+<pre><code>## standardGeneric for &quot;summary&quot; defined from package &quot;base&quot;
+## 
+## function (object, ...) 
+## standardGeneric(&quot;summary&quot;)
+## &lt;environment: 0x0000000022008b50&gt;
+## Methods may be defined for arguments: object
+## Use  showMethods(summary)  for currently available ones.</code></pre>
+<pre class="r"><code>linReg6 &lt;- lm(gpa ~ iq + sex + total + c1 + c2 + c5, data = psycho)
+summary(linReg6)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gpa ~ iq + sex + total + c1 + c2 + c5, data = psycho)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -5.4734 -0.7922  0.1874  1.0032  2.2016 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -3.88829    1.59931  -2.431   0.0176 *  
+## iq           0.08161    0.01545   5.281 1.34e-06 ***
+## sex2        -0.57871    0.37902  -1.527   0.1312    
+## total       -0.04715    0.03924  -1.202   0.2335    
+## c1           0.16618    0.09554   1.739   0.0863 .  
+## c2           0.14963    0.08508   1.759   0.0829 .  
+## c5           0.18137    0.10166   1.784   0.0787 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.439 on 71 degrees of freedom
+## Multiple R-squared:  0.5671, Adjusted R-squared:  0.5305 
+## F-statistic:  15.5 on 6 and 71 DF,  p-value: 2.829e-11</code></pre>
+<pre class="r"><code>linReg5 &lt;- lm(gpa ~ iq + sex + c1 + c2 + c5, data = psycho)
+summary(linReg5)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gpa ~ iq + sex + c1 + c2 + c5, data = psycho)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -5.6240 -0.7203  0.1835  1.0664  2.1702 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -3.96960    1.60280  -2.477   0.0156 *  
+## iq           0.07884    0.01533   5.144 2.23e-06 ***
+## sex2        -0.74122    0.35516  -2.087   0.0404 *  
+## c1           0.09929    0.07789   1.275   0.2065    
+## c2           0.09746    0.07339   1.328   0.1884    
+## c5           0.09572    0.07271   1.317   0.1922    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.443 on 72 degrees of freedom
+## Multiple R-squared:  0.5583, Adjusted R-squared:  0.5277 
+## F-statistic:  18.2 on 5 and 72 DF,  p-value: 1.233e-11</code></pre>
+<pre class="r"><code>linReg4 &lt;- lm(gpa ~ iq + sex + c2 + c5, data = psycho)
+summary(linReg4)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gpa ~ iq + sex + c2 + c5, data = psycho)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -5.4600 -0.6678  0.1835  0.9840  2.4275 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -2.97184    1.40469  -2.116   0.0378 *  
+## iq           0.07619    0.01525   4.996 3.87e-06 ***
+## sex2        -0.86172    0.34382  -2.506   0.0144 *  
+## c2           0.14928    0.06136   2.433   0.0174 *  
+## c5           0.09667    0.07302   1.324   0.1896    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.449 on 73 degrees of freedom
+## Multiple R-squared:  0.5484, Adjusted R-squared:  0.5236 
+## F-statistic: 22.16 on 4 and 73 DF,  p-value: 5.28e-12</code></pre>
+<pre class="r"><code>linReg3 &lt;- lm(gpa ~ iq + sex + c2, data = psycho)
+summary(linReg3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gpa ~ iq + sex + c2, data = psycho)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -5.6098 -0.6634  0.1974  0.8625  3.0169 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -2.80407    1.40606  -1.994 0.049807 *  
+## iq           0.07691    0.01532   5.021 3.44e-06 ***
+## sex2        -0.90878    0.34371  -2.644 0.009997 ** 
+## c2           0.19304    0.05196   3.715 0.000391 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 1.456 on 74 degrees of freedom
+## Multiple R-squared:  0.5375, Adjusted R-squared:  0.5188 
+## F-statistic: 28.67 on 3 and 74 DF,  p-value: 2.088e-12</code></pre>
+<p>Das beste Modell ist gpa = <span class="math inline">\(β_0 + β_1*iq + β_2*sex + β_3*c2\)</span> mit <span class="math inline">\(R^2\)</span> gleich 0.5375.</p>
+</div>
+<div id="c" class="section level2">
+<h2>6c)</h2>
+<p><em>Wenden Sie nun die schrittweise Selektion mit dem AIC (Funktion stepAIC aus dem Paket MASS in R) auf den Datensatz an. Achten Sie darauf, dass Sie die Argumente der Funktion stepAIC richtig deﬁnieren. Verwenden Sie dabei zunachst das volle Modell und dann das Nullmodell als Ausgangsmodell.</em></p>
+<pre class="r"><code>stepAIC(linReg10, direction = &quot;backward&quot;)</code></pre>
+<pre><code>## Start:  AIC=67.1
+## gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c4 + c5 + c6
+## 
+##         Df Sum of Sq    RSS    AIC
+## - c4     1     0.002 139.07 65.103
+## - c6     1     0.024 139.09 65.116
+## - total  1     2.674 141.74 66.588
+## - c3     1     3.389 142.45 66.980
+## &lt;none&gt;               139.06 67.102
+## - c5     1     3.715 142.78 67.158
+## - alter  1     4.096 143.16 67.366
+## - c2     1     4.328 143.39 67.492
+## - sex    1     4.409 143.47 67.536
+## - c1     1     5.964 145.03 68.377
+## - iq     1    36.288 175.35 83.187
+## 
+## Step:  AIC=65.1
+## gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c5 + c6
+## 
+##         Df Sum of Sq    RSS    AIC
+## - c6     1     0.023 139.09 63.116
+## &lt;none&gt;               139.07 65.103
+## - total  1     3.713 142.78 65.158
+## - c3     1     3.739 142.81 65.172
+## - c5     1     3.822 142.89 65.218
+## - alter  1     4.130 143.20 65.386
+## - c2     1     4.327 143.39 65.493
+## - sex    1     4.781 143.85 65.739
+## - c1     1     6.868 145.93 66.863
+## - iq     1    41.111 180.18 83.304
+## 
+## Step:  AIC=63.12
+## gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c5
+## 
+##         Df Sum of Sq    RSS    AIC
+## &lt;none&gt;               139.09 63.116
+## - c3     1     3.901 142.99 63.274
+## - c5     1     3.929 143.02 63.289
+## - alter  1     4.121 143.21 63.394
+## - total  1     4.434 143.52 63.564
+## - c2     1     4.458 143.55 63.576
+## - sex    1     4.758 143.85 63.739
+## - c1     1     6.862 145.95 64.872
+## - iq     1    41.090 180.18 81.305</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gpa ~ iq + alter + sex + total + c1 + c2 + c3 + 
+##     c5, data = psycho)
+## 
+## Coefficients:
+## (Intercept)           iq        alter         sex2        total           c1  
+##     2.47444      0.07353     -0.40666     -0.57486     -0.06493      0.18922  
+##          c2           c3           c5  
+##     0.12618      0.12419      0.14316</code></pre>
+<p>Schrittweise Selektion (AIC): das volle Modell als Ausgangsmodell: <span class="math inline">\(gpa = β_0 + β_1*iq + β_2*alter + β_3*sex + β_4*total + β_5*c1 + β_6*c2 + β_7*c3 + β_8*c5\)</span></p>
+<pre class="r"><code>linReg0 &lt;- lm(gpa ~ 1, data = psycho)
+stepAIC(linReg0, direction = &quot;forward&quot;, scope = formula(linReg10))</code></pre>
+<pre><code>## Start:  AIC=116.7
+## gpa ~ 1
+## 
+##         Df Sum of Sq    RSS     AIC
+## + iq     1   136.319 203.11  78.648
+## + c2     1   122.507 216.92  83.780
+## + total  1    99.650 239.78  91.594
+## + c3     1    83.235 256.19  96.759
+## + c5     1    75.719 263.71  99.014
+## + c1     1    65.927 273.50 101.858
+## + c6     1    54.703 284.72 104.995
+## + alter  1    51.435 287.99 105.886
+## + c4     1    24.192 315.24 112.936
+## &lt;none&gt;               339.43 116.703
+## + sex    1     3.216 336.21 117.960
+## 
+## Step:  AIC=78.65
+## gpa ~ iq
+## 
+##         Df Sum of Sq    RSS    AIC
+## + c1     1    32.129 170.98 67.217
+## + c2     1    31.296 171.81 67.596
+## + c5     1    24.618 178.49 70.570
+## + total  1    23.583 179.53 71.021
+## + c3     1    19.624 183.48 72.723
+## + sex    1    16.843 186.26 73.896
+## + c6     1    11.709 191.40 76.017
+## + alter  1     8.586 194.52 77.279
+## &lt;none&gt;               203.11 78.648
+## + c4     1     5.066 198.04 78.678
+## 
+## Step:  AIC=67.22
+## gpa ~ iq + c1
+## 
+##         Df Sum of Sq    RSS    AIC
+## + c5     1    9.8926 161.09 64.568
+## + sex    1    7.9972 162.98 65.481
+## + c3     1    7.9496 163.03 65.504
+## + c2     1    7.1458 163.83 65.887
+## + alter  1    4.6285 166.35 67.077
+## &lt;none&gt;               170.98 67.217
+## + total  1    1.6724 169.31 68.450
+## + c6     1    0.6476 170.33 68.921
+## + c4     1    0.0874 170.89 69.177
+## 
+## Step:  AIC=64.57
+## gpa ~ iq + c1 + c5
+## 
+##         Df Sum of Sq    RSS    AIC
+## + sex    1    7.4984 153.59 62.850
+## + alter  1    5.5945 155.49 63.811
+## + c4     1    4.4304 156.66 64.393
+## &lt;none&gt;               161.09 64.568
+## + total  1    2.3148 158.77 65.439
+## + c2     1    2.1017 158.99 65.544
+## + c6     1    2.0510 159.04 65.569
+## + c3     1    1.0059 160.08 66.080
+## 
+## Step:  AIC=62.85
+## gpa ~ iq + c1 + c5 + sex
+## 
+##         Df Sum of Sq    RSS    AIC
+## + alter  1    4.9399 148.65 62.300
+## &lt;none&gt;               153.59 62.850
+## + c2     1    3.6721 149.92 62.963
+## + c3     1    2.5028 151.09 63.569
+## + c4     1    1.0150 152.57 64.333
+## + c6     1    0.4503 153.14 64.621
+## + total  1    0.2583 153.33 64.719
+## 
+## Step:  AIC=62.3
+## gpa ~ iq + c1 + c5 + sex + alter
+## 
+##         Df Sum of Sq    RSS    AIC
+## + c2     1    3.7680 144.88 62.298
+## &lt;none&gt;               148.65 62.300
+## + c3     1    3.2252 145.42 62.589
+## + c4     1    0.4530 148.20 64.062
+## + c6     1    0.0488 148.60 64.275
+## + total  1    0.0324 148.62 64.283
+## 
+## Step:  AIC=62.3
+## gpa ~ iq + c1 + c5 + sex + alter + c2
+## 
+##         Df Sum of Sq    RSS    AIC
+## &lt;none&gt;               144.88 62.298
+## + total  1   1.88988 142.99 63.274
+## + c4     1   1.49024 143.39 63.491
+## + c3     1   1.35680 143.52 63.564
+## + c6     1   0.16041 144.72 64.211</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gpa ~ iq + c1 + c5 + sex + alter + c2, data = psycho)
+## 
+## Coefficients:
+## (Intercept)           iq           c1           c5         sex2        alter  
+##     2.69559      0.07054      0.08420      0.10207     -0.71313     -0.44315  
+##          c2  
+##     0.09873</code></pre>
+<p>Schrittweise Selektion (AIC): das Nullmodell als Ausgangsmodell: <span class="math inline">\(gpa = β_0 + β_1*iq + β_2*alter + β_3*sex + β_4*c1 + β_5*c2 + β_6*c5\)</span></p>
+</div>
+<div id="d" class="section level2">
+<h2>6d)</h2>
+<p><em>Vergleichen Sie nun Ihr Ergebnis aus c) mit einer schrittweisen Selektion basierend auf dem BIC (und dem vollen Modell als Ausgangsmodell). Schauen Sie sich in der zugehorigen Hilfedatei mogliche Argumente der Funktion an. Die Funktion nobs macht Ihnen hier das Leben leichter. Hatten Sie das Ergebnis so erwartet?</em></p>
+<pre class="r"><code>step(linReg10, direction = &quot;backward&quot;, k = log(nrow(psycho)))</code></pre>
+<pre><code>## Start:  AIC=93.03
+## gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c4 + c5 + c6
+## 
+##         Df Sum of Sq    RSS     AIC
+## - c4     1     0.002 139.07  88.670
+## - c6     1     0.024 139.09  88.683
+## - total  1     2.674 141.74  90.155
+## - c3     1     3.389 142.45  90.547
+## - c5     1     3.715 142.78  90.726
+## - alter  1     4.096 143.16  90.933
+## - c2     1     4.328 143.39  91.059
+## - sex    1     4.409 143.47  91.104
+## - c1     1     5.964 145.03  91.945
+## &lt;none&gt;               139.06  93.026
+## - iq     1    36.288 175.35 106.754
+## 
+## Step:  AIC=88.67
+## gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c5 + c6
+## 
+##         Df Sum of Sq    RSS     AIC
+## - c6     1     0.023 139.09  84.326
+## - total  1     3.713 142.78  86.369
+## - c3     1     3.739 142.81  86.383
+## - c5     1     3.822 142.89  86.428
+## - alter  1     4.130 143.20  86.596
+## - c2     1     4.327 143.39  86.703
+## - sex    1     4.781 143.85  86.949
+## - c1     1     6.868 145.93  88.073
+## &lt;none&gt;               139.07  88.670
+## - iq     1    41.111 180.18 104.514
+## 
+## Step:  AIC=84.33
+## gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c5
+## 
+##         Df Sum of Sq    RSS     AIC
+## - c3     1     3.901 142.99  82.127
+## - c5     1     3.929 143.02  82.142
+## - alter  1     4.121 143.21  82.247
+## - total  1     4.434 143.52  82.417
+## - c2     1     4.458 143.55  82.430
+## - sex    1     4.758 143.85  82.593
+## - c1     1     6.862 145.95  83.726
+## &lt;none&gt;               139.09  84.326
+## - iq     1    41.090 180.18 100.159
+## 
+## Step:  AIC=82.13
+## gpa ~ iq + alter + sex + total + c1 + c2 + c5
+## 
+##         Df Sum of Sq    RSS    AIC
+## - total  1     1.890 144.88 78.795
+## - alter  1     3.938 146.93 79.890
+## - c1     1     4.253 147.24 80.057
+## - sex    1     4.928 147.92 80.414
+## - c2     1     5.625 148.62 80.780
+## - c5     1     5.786 148.78 80.864
+## &lt;none&gt;               142.99 82.127
+## - iq     1    41.205 184.20 97.522
+## 
+## Step:  AIC=78.79
+## gpa ~ iq + alter + sex + c1 + c2 + c5
+## 
+##         Df Sum of Sq    RSS    AIC
+## - c1     1     2.396 147.28 75.717
+## - c2     1     3.768 148.65 76.441
+## - c5     1     4.090 148.97 76.610
+## - alter  1     5.036 149.92 77.103
+## &lt;none&gt;               144.88 78.795
+## - sex    1     8.373 153.25 78.820
+## - iq     1    39.329 184.21 93.171
+## 
+## Step:  AIC=75.72
+## gpa ~ iq + alter + sex + c2 + c5
+## 
+##         Df Sum of Sq    RSS    AIC
+## - c5     1     4.199 151.48 73.554
+## - alter  1     6.024 153.30 74.487
+## &lt;none&gt;               147.28 75.717
+## - c2     1    11.211 158.49 77.083
+## - sex    1    11.608 158.88 77.278
+## - iq     1    37.185 184.46 88.921
+## 
+## Step:  AIC=73.55
+## gpa ~ iq + alter + sex + c2
+## 
+##         Df Sum of Sq    RSS    AIC
+## - alter  1     5.506 156.98 71.982
+## &lt;none&gt;               151.48 73.554
+## - sex    1    13.312 164.79 75.767
+## - c2     1    28.038 179.51 82.443
+## - iq     1    38.577 190.05 86.893
+## 
+## Step:  AIC=71.98
+## gpa ~ iq + sex + c2
+## 
+##        Df Sum of Sq    RSS    AIC
+## &lt;none&gt;              156.98 71.982
+## - sex   1    14.830 171.81 74.666
+## - c2    1    29.283 186.26 80.966
+## - iq    1    53.490 210.47 90.496</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = gpa ~ iq + sex + c2, data = psycho)
+## 
+## Coefficients:
+## (Intercept)           iq         sex2           c2  
+##    -2.80407      0.07691     -0.90878      0.19304</code></pre>
+<p>Schrittweise Selektion (BIC): das volle Modell als Ausgangsmodell: <span class="math inline">\(gpa = β_0 + β_1*iq + β_2*sex + β_3*c2\)</span>. Das Ergebnis war so zu erwarten, weil AIC Modelle mit vielen Regressoren bevorzugt.</p>
+</div>
+</div>
 
 
 
