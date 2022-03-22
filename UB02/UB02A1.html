@@ -635,7 +635,7 @@ str(insur)</code></pre>
 </div>
 <div id="b" class="section level2">
 <h2>1b)</h2>
-<p><em>b) Passen Sie zunachst einmal das volle Modell an und nutzen Sie dabei den Logit-Link.</em></p>
+<p><em>Passen Sie zunachst einmal das volle Modell an und nutzen Sie dabei den Logit-Link.</em></p>
 <pre class="r"><code>logRegFull &lt;- glm(ins ~ married + retire + hstatusg + hhincome + 
                    age + hisp + educyear, family = binomial(link = &quot;logit&quot;), data = insur)
 summary(logRegFull)</code></pre>
@@ -741,7 +741,50 @@ summary(logRegFull)</code></pre>
 </div>
 <div id="d" class="section level2">
 <h2>1d)</h2>
-<p><em>Interpretieren Sie zunachst ganz allgemein die Regressionskoeﬃzienten Ihres Modells. Wie verandert sich c.p. durch eine Heirat die Chance, krankenversichert zu sein? Wie vera¨ndert sich c.p. die Chance, wenn eine Person ein weiteres Ausbildungsjahr absolviert hat?</em></p>
+<p><em>Interpretieren Sie zunachst ganz allgemein die Regressionskoffizienten Ihres Modells. Wie verandert sich c.p. durch eine Heirat die Chance, krankenversichert zu sein? Wie verandert sich c.p. die Chance, wenn eine Person ein weiteres Ausbildungsjahr absolviert hat?</em></p>
+<p>Die Chance, krankversichert zu sein, erhoht sich durch eine Heirat und die Absolvierung eines weiteren Ausbildungsjahres.</p>
+</div>
+<div id="e" class="section level2">
+<h2>1e)</h2>
+<p><em>Berechnen Sie den durchschnittlichen marginalen Effekt einer Veranderung der Variable retire.</em></p>
+<pre class="r"><code>eff_retire &lt;- fitted(logRegFull)*(1 - fitted(logRegFull))*coef(logRegFull)[&quot;retire1&quot;]
+ame_retire &lt;- mean(eff_retire)
+ame_retire</code></pre>
+<pre><code>## [1] 0.0427616</code></pre>
+<p>Der durchschnittliche marginale Effekt einer Veranderung der Variable retire ist 0.0427516: im Mittel uber alle Personen haben wir einen positiven Effekt von Renter-Status einer Person von 0.0427616 der Wahrscheinlichkeit, dass die Person krankversichert ist.</p>
+</div>
+<div id="f" class="section level2">
+<h2>1f)</h2>
+<p><em>Passen Sie ein Modell ohne die Variablen married, retire und hisp an. Berechnen Sie sodann anhand dieses Modells den marginalen Effekt im Mittelwert bezuglich der Variable educyear.</em></p>
+<pre class="r"><code>logRegRest &lt;- glm(ins ~ hstatusg + hhincome + 
+                   age + educyear, family = binomial(link = &quot;logit&quot;), data = insur)
+summary(logRegRest)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = ins ~ hstatusg + hhincome + age + educyear, family = binomial(link = &quot;logit&quot;), 
+##     data = insur)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.8460  -0.9939  -0.7561   1.2659   2.1117  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -2.4963307  0.7191266  -3.471 0.000518 ***
+## hstatusg1    0.3361027  0.0906576   3.707 0.000209 ***
+## hhincome     0.0033853  0.0008118   4.170 3.04e-05 ***
+## age          0.0013871  0.0106490   0.130 0.896365    
+## educyear     0.1277322  0.0135869   9.401  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 4279.5  on 3205  degrees of freedom
+## Residual deviance: 4057.9  on 3201  degrees of freedom
+## AIC: 4067.9
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
 </div>
 </div>
 

@@ -90,7 +90,7 @@ insur$hisp <- as.factor(insur$hisp)
 str(insur)
 ```
 ## 1b)
-*b) Passen Sie zunachst einmal das volle Modell an und nutzen Sie dabei den Logit-Link.*
+*Passen Sie zunachst einmal das volle Modell an und nutzen Sie dabei den Logit-Link.*
 ```{r}
 logRegFull <- glm(ins ~ married + retire + hstatusg + hhincome + 
                    age + hisp + educyear, family = binomial(link = "logit"), data = insur)
@@ -109,7 +109,35 @@ binned.resids(logRegFull$fitted.values, logRegFull$residuals)
 Die Residuen scheinen im Mittelwert Null zu sein und konstante Varianz (Homoskedastizitat) zu haben.
 
 ## 1d)
-*Interpretieren Sie zunachst ganz allgemein die Regressionskoeﬃzienten Ihres Modells. Wie verandert sich c.p. durch eine Heirat die Chance, krankenversichert zu sein? Wie vera¨ndert sich c.p. die Chance, wenn eine Person ein weiteres Ausbildungsjahr absolviert hat?*
+*Interpretieren Sie zunachst ganz allgemein die Regressionskoffizienten Ihres Modells. Wie verandert sich c.p. durch eine Heirat die Chance, krankenversichert zu sein? Wie verandert sich c.p. die Chance, wenn eine Person ein weiteres Ausbildungsjahr absolviert hat?*
+
+Die Chance, krankversichert zu sein, erhoht sich durch eine Heirat und die Absolvierung eines weiteren Ausbildungsjahres.
+
+## 1e)
+*Berechnen Sie den durchschnittlichen marginalen Effekt einer Veranderung der Variable retire.*
+
+```{r}
+eff_retire <- fitted(logRegFull)*(1 - fitted(logRegFull))*coef(logRegFull)["retire1"]
+ame_retire <- mean(eff_retire)
+ame_retire
+
+```
+Der durchschnittliche marginale Effekt einer Veranderung der Variable retire ist 0.0427516: im Mittel uber alle Personen haben wir einen positiven Effekt von Renter-Status einer Person von 0.0427616 der Wahrscheinlichkeit, dass die Person krankversichert ist.
+
+## 1f)
+*Passen Sie ein Modell ohne die Variablen married, retire und hisp an. Berechnen Sie sodann anhand dieses Modells den marginalen Effekt im Mittelwert bezuglich der Variable educyear.*
+
+```{r}
+logRegRest <- glm(ins ~ hstatusg + hhincome + 
+                   age + educyear, family = binomial(link = "logit"), data = insur)
+summary(logRegRest)
+
+
+
+```
+
+
+MEM ?
 
 
 
