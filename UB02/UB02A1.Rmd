@@ -66,5 +66,51 @@ any(is.na(insur))
 hist(insur$hhincome, breaks = 100, prob = TRUE)
 ```
 
+## 1a)
+*Aufgrund der Rechtsschiefe des Einkommens entscheiden Sie sich fur eine Logarithmierung. Addieren Sie zur Vermeidung von NAs dabei zur Ursprungsvariable zunachst die Konstante 0,001. Dummyvariablen sollten Sie zunachst zu Faktoren umwandeln.*
+
+```{r}
+summary(insur$hhincome)
+insur$loghhincome <- insur$hhincome + 0.001
+summary(insur$loghhincome)
+insur$loghhincome <- log(insur$loghhincome)
+summary(insur$loghhincome)
+```
+
+
+```{r}
+hist(insur$loghhincome, breaks = 100, prob = TRUE)
+```
+```{r}
+insur$ins <- as.factor(insur$ins)
+insur$married <- as.factor(insur$married)
+insur$retire <- as.factor(insur$retire)
+insur$hstatusg <- as.factor(insur$hstatusg)
+insur$hisp <- as.factor(insur$hisp)
+str(insur)
+```
+## 1b)
+*b) Passen Sie zunachst einmal das volle Modell an und nutzen Sie dabei den Logit-Link.*
+```{r}
+logRegFull <- glm(ins ~ married + retire + hstatusg + hhincome + 
+                   age + hisp + educyear, family = binomial(link = "logit"), data = insur)
+summary(logRegFull)
+```
+## 1c)
+*Zur Diagnostik schauen Sie sich den binned residual plot an. Dazu verwenden Sie die Funktion binnedplot aus dem arm-Paket und plotten die geﬁtteten Werte auf die Abszisse und die Residuen auf die Ordinate. Wie
+interpretieren Sie die Graﬁk? Die Funktion binned.resids mit den bereits zum Plotten genutzten Argumenten
+konnte Ihnen hier helfen.*
+
+```{r}
+binnedplot(logRegFull$fitted.values, logRegFull$residuals)
+binned.resids(logRegFull$fitted.values, logRegFull$residuals)
+```
+
+Die Residuen scheinen im Mittelwert Null zu sein und konstante Varianz (Homoskedastizitat) zu haben.
+
+## 1d)
+*Interpretieren Sie zunachst ganz allgemein die Regressionskoeﬃzienten Ihres Modells. Wie verandert sich c.p. durch eine Heirat die Chance, krankenversichert zu sein? Wie vera¨ndert sich c.p. die Chance, wenn eine Person ein weiteres Ausbildungsjahr absolviert hat?*
+
+
 
 
