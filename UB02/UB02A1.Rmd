@@ -30,6 +30,8 @@ library(rAmCharts)
 library(xfun)
 library(car)
 library(effects)
+library(lmtest)
+library(MASS)
 colorize <- function(x, color) {
   if (knitr::is_latex_output()) {
     sprintf("\\textcolor{%s}{%s}", color, x)
@@ -164,5 +166,35 @@ marg_table_insr[1, 1] + marg_table_insr[2, 2]
 
 Beim Schwellenwert von 0.5 ist der Anteil der korrekt vorhergesagten Werte betragt 62.45%.
 
+## 1i)
+*Berechnen Sie fur das Modell aus Teilaufgabe b) das Pseudo-R2.*
+
+```{r}
+logRegNull <- glm(ins ~ 1, family = binomial(link = "logit"), data = insur)
+
+PseudoR2 <- 1 - logLik(logRegFull)/logLik(logRegNull)
+PseudoR2
+
+```
+
+Das Pseudo-R2 fur das Modell aus Teilaufgabe b) betragt 0.0677
+
+## 1j)
+*Fuhren Sie fur das Modell aus Teilaufgabe b) einen Test auf Fehlspeziﬁkation durch. Hinweis: Nutzen Sie die Funktion lrtest aus dem lmtest-Paket.
+*
+
+```{r}
+lrtest(logRegFull, . ~ . + I(predict(logRegFull, type = "link")^2))
+```
+Da das erweiterte Modell mit $\widehat{η^2_i}$ eine signifikanz kleinere Signifikanz als das Modell ohne $\widehat{η^2_i}$, ist das Modell inkorrekt spezifiziert. Wie konnen davon ausgehen, dass quadrierter linearer Pradiktor einen signifikanten Erklarungsgehalt hatte.
 
 
+## 1k)
+*Fuhren Sie eine Variablenselektion mit der schrittweisen Selektion durch. Gehen Sie vom Modell aus Teilaufgabe b) aus und geben Sie dieses Modell mit samtlichen Interaktionstermen zweiter Ordnung als Maximalmodellan (uber Nutzung von ^2 in Formel). Nutzen Sie dabei das Paket MASS.*
+```{r}
+logRegMax <- glm(ins ~ married + retire + hstatusg + hhincome + 
+                   age + hisp + educyear + married^2 + retire^2 + hstatusg^2 + hhincome^2 + 
+                   age^2 + hisp^2 + educyear^2, family = binomial(link = "logit"), data = insur)
+stepAIC(logRegMax, direction = "backward")
+```
+Schrittweise Selektion (AIC): das Maximalmodell als Ausgangsmodell: $ins = β_0 + β_1*married + β_2*retire + β_3*hstatusg + β_4*hhincome + β_5*hisp + β_6*educyear$. 
