@@ -32,6 +32,7 @@ library(car)
 library(effects)
 library(lmtest)
 library(MASS)
+library(margins)
 colorize <- function(x, color) {
   if (knitr::is_latex_output()) {
     sprintf("\\textcolor{%s}{%s}", color, x)
@@ -95,7 +96,7 @@ str(insur)
 ## 1b)
 *Passen Sie zunachst einmal das volle Modell an und nutzen Sie dabei den Logit-Link.*
 ```{r}
-logRegFull <- glm(ins ~ married + retire + hstatusg + hhincome + 
+logRegFull <- glm(ins ~ married + retire + hstatusg + loghhincome + 
                    age + hisp + educyear, family = binomial(link = "logit"), data = insur)
 summary(logRegFull)
 ```
@@ -125,13 +126,13 @@ ame_retire <- mean(eff_retire)
 ame_retire
 
 ```
-Der durchschnittliche marginale Effekt einer Veranderung der Variable retire ist 0.0427516: im Mittel uber alle Personen haben wir einen positiven Effekt von Renter-Status einer Person von 0.0427616 der Wahrscheinlichkeit, dass die Person krankversichert ist.
+Der durchschnittliche marginale Effekt einer Veranderung der Variable retire ist 0.04723126: im Mittel uber alle Personen haben wir einen positiven Effekt von Renter-Status einer Person von 0.04723126 der Wahrscheinlichkeit, dass die Person krankversichert ist.
 
 ## 1f)
 *Passen Sie ein Modell ohne die Variablen married, retire und hisp an. Berechnen Sie sodann anhand dieses Modells den marginalen Effekt im Mittelwert bezuglich der Variable educyear.*
 
 ```{r}
-logRegRest <- glm(ins ~ hstatusg + hhincome + 
+logRegRest <- glm(ins ~ hstatusg + loghhincome + 
                    age + educyear, family = binomial(link = "logit"), data = insur)
 summary(logRegRest)
 
@@ -142,7 +143,7 @@ mem_educyear <- binomial()$linkinv(eta_bar) * (1 - binomial()$linkinv(eta_bar)) 
 mem_educyear
 ```
 
-Der marginale Effekt im Mittelwert bezuglich der Variable educyear betragt 0.03. Positiver Effekt  eines weiteren Bildungsjahres auf die Wahrscheinlichkeit, krankversichert zu sein. Jedes weitere Bildungsjahr erhoht die Wahrscheinlichkit um 0.03.
+Der marginale Effekt im Mittelwert bezuglich der Variable educyear betragt 0.018 Positiver Effekt  eines weiteren Bildungsjahres auf die Wahrscheinlichkeit, krankversichert zu sein. Jedes weitere Bildungsjahr erhoht die Wahrscheinlichkit um 0.018.
 
 ## 1g)
 *Schauen Sie sich die Effektplots fur die Variable educyear im Modell aus Teilaufgabe b) an. Hinweis: Nutzen Sie die Funktion allEffects aus dem effects-Paket.*
@@ -164,7 +165,7 @@ marg_table_insr[1, 1] + marg_table_insr[2, 2]
 
 ```
 
-Beim Schwellenwert von 0.5 ist der Anteil der korrekt vorhergesagten Werte betragt 62.45%.
+Beim Schwellenwert von 0.5 ist der Anteil der korrekt vorhergesagten Werte betragt 63.76%.
 
 ## 1i)
 *Berechnen Sie fur das Modell aus Teilaufgabe b) das Pseudo-R2.*
@@ -177,7 +178,7 @@ PseudoR2
 
 ```
 
-Das Pseudo-R2 fur das Modell aus Teilaufgabe b) betragt 0.0677
+Das Pseudo-R2 fur das Modell aus Teilaufgabe b) betragt 0.0936
 
 ## 1j)
 *Fuhren Sie fur das Modell aus Teilaufgabe b) einen Test auf Fehlspeziﬁkation durch. Hinweis: Nutzen Sie die Funktion lrtest aus dem lmtest-Paket.
@@ -192,9 +193,62 @@ Da das erweiterte Modell mit $\widehat{η^2_i}$ eine signifikanz kleinere Signif
 ## 1k)
 *Fuhren Sie eine Variablenselektion mit der schrittweisen Selektion durch. Gehen Sie vom Modell aus Teilaufgabe b) aus und geben Sie dieses Modell mit samtlichen Interaktionstermen zweiter Ordnung als Maximalmodellan (uber Nutzung von ^2 in Formel). Nutzen Sie dabei das Paket MASS.*
 ```{r}
-logRegMax <- glm(ins ~ married + retire + hstatusg + hhincome + 
-                   age + hisp + educyear + married^2 + retire^2 + hstatusg^2 + hhincome^2 + 
+logRegMax <- glm(ins ~ married + retire + hstatusg + loghhincome + 
+                   age + hisp + educyear + married^2 + retire^2 + hstatusg^2 + loghhincome^2 + 
                    age^2 + hisp^2 + educyear^2, family = binomial(link = "logit"), data = insur)
 stepAIC(logRegMax, direction = "backward")
 ```
-Schrittweise Selektion (AIC): das Maximalmodell als Ausgangsmodell: $ins = β_0 + β_1*married + β_2*retire + β_3*hstatusg + β_4*hhincome + β_5*hisp + β_6*educyear$. 
+Schrittweise Selektion (AIC): das Maximalmodell als Ausgangsmodell: $ins = β_0 + β_1*married + β_2*retire + β_3*hstatusg + β_4*loghhincome + β_5*age + β_6*hisp +β_7*educyear + β_8*married^2 + β_9*retire^2 + β_10*hstatusg^2 + β_11*loghhincome^2 + β_12*age^2 + β_13*hisp^2 +β_14*educyear^2$. 
+
+# Aufgabe 2: Probit Modelle
+
+## 2a)
+*Passen Sie das gleiche Modell wie in Aufgabe 1 b) an, verwenden Sie diesmal jedoch die Probit-Linkfunktion.*
+
+```{r}
+probRegFull <- glm(ins ~ married + retire + hstatusg + loghhincome + 
+                   age + hisp + educyear, family = binomial(link = "probit"), data = insur)
+summary(probRegFull)
+```
+## 2b)
+*Vergleichen Sie die geschatzten Wahrscheinlichkeiten aus dem Logit- und Probit-Modell.*
+```{r}
+summary(logRegFull)
+summary(probRegFull)
+
+```
+
+???????????????  
+???????????????  
+???????????????  
+ 
+## 2c)
+*Was konnen Sie uber die $\widehat{β_s}$ der beiden Modelle sagen?*
+
+Die $\widehat{β_s}$ der beiden Modelle unterscheiden sich, haben jedoch die gleichen Vorzeichen.
+
+
+
+## 2d)
+*Berechnen Sie den Anteil korrekt vorhergesagter Werte fur das Probit-Modell.*
+```{r}
+marg_table_insr_prob <- prop.table(table(Obs = insur$ins, Pred = round(fitted(probRegFull))))
+marg_table_insr_prob
+marg_table_insr_prob[1, 1] + marg_table_insr_prob[2, 2]
+```
+
+Der Anteil korrekt vorhergesagter Werte fur das Probit-Modell betragt
+63.88%.
+
+## 2e)
+*Berechnen Sie den durchschnittlichen marginalen Effekt einer Veranderung der Variable retire im Probit-Modell und vergleichen Sie das Ergebnis mit Aufgabe 1 e). Beachten Sie, dass Sie fur diese Berechnung nichteinfach auf die entsprechende Formel des Logit-Modells zuruckgreifen konnen.*
+
+```{r}
+summary(margins(logRegFull, type = "response"))
+summary(margins(probRegFull, type = "response"))
+```
+Der durchschnittliche marginale Effekt einer Veranderung der Variable retire im Probit-Modell betragt 0.0458, wahrend der durchschnittliche marginale Effekt einer Veranderung der Variable retire im Logit-Modell ist 0.0471.
+
+
+
+
