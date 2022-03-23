@@ -29,6 +29,7 @@ library(arm)
 library(rAmCharts)
 library(xfun)
 library(car)
+library(effects)
 colorize <- function(x, color) {
   if (knitr::is_latex_output()) {
     sprintf("\\textcolor{%s}{%s}", color, x)
@@ -132,13 +133,36 @@ logRegRest <- glm(ins ~ hstatusg + hhincome +
                    age + educyear, family = binomial(link = "logit"), data = insur)
 summary(logRegRest)
 
+X <- model.matrix(logRegRest)
+X_bar <- colMeans(X)
+eta_bar <- X_bar %*% coef(logRegRest)
+mem_educyear <- binomial()$linkinv(eta_bar) * (1 - binomial()$linkinv(eta_bar)) * coef(logRegRest)["educyear"]
+mem_educyear
+```
+
+Der marginale Effekt im Mittelwert bezuglich der Variable educyear betragt 0.03. Positiver Effekt  eines weiteren Bildungsjahres auf die Wahrscheinlichkeit, krankversichert zu sein. Jedes weitere Bildungsjahr erhoht die Wahrscheinlichkit um 0.03.
+
+## 1g)
+*Schauen Sie sich die Effektplots fur die Variable educyear im Modell aus Teilaufgabe b) an. Hinweis: Nutzen Sie die Funktion allEffects aus dem effects-Paket.*
+
+```{r}
+plot(allEffects(logRegFull)[7])
+
+```
+
+## 1h)
+*Wie hoch ist der Anteil korrekt vorhergesagter Werte im Modell aus Teilaufgabe b)? Als Schwellenwert setzen
+Sie 0,5 an.*
+
+```{r}
+marg_table_insr <- prop.table(table(Obs = insur$ins, Pred = round(fitted(logRegFull))))
+marg_table_insr
+marg_table_insr[1, 1] + marg_table_insr[2, 2]
 
 
 ```
 
-
-MEM ?
-
+Beim Schwellenwert von 0.5 ist der Anteil der korrekt vorhergesagten Werte betragt 62.45%.
 
 
 
