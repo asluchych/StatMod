@@ -80,7 +80,7 @@ coeftest(prog_mnl)
 Die verwendete Referenzkartegorie bei der abhangigen Variable ist academic. Die Referenzkategorie ist bei der sozio-okonomischen Klasse "high" und beim Schultyp die Auspragung "private".
 
 ## 3c)
-*Was ist der Eﬀekt der niedrigen relativ zur hohen sozio-okonomischen Klasse auf die Chance, das vocation-Programm statt des academic-Programms zu wahlen?*
+*Was ist der Effekt der niedrigen relativ zur hohen sozio-okonomischen Klasse auf die Chance, das vocation-Programm statt des academic-Programms zu wahlen?*
 ```{r}
 exp(0.064990)
 
@@ -101,15 +101,54 @@ exp(CI_math_lower)
 exp(CI_math_upper)
 
 ```
-Ein zusatzlicher Punkt im Mathematik-Test verrigert die Chance, das general-Programm statt des academic-Programms zu wahlen. Berechnen Sie das Konﬁdenzintervall fur diese Chance. Eine Person mit einem zusätzlichen Punkt im Mathematik-Test hat c.p. eine 0.905-mal so grosse Chance, das general-Programm statt des academic-Programms zu wahlen, verglichen mit einer Person ohne einen zusatzlichen Punkt. Der Effekt ist signifikant.
+Ein zusatzlicher Punkt im Mathematik-Test verrigert c.p. die Chance, das general-Programm statt des academic-Programms zu wahlen. Die Chance, dass eine Person mit einem zusätzlichen Punkt im Mathematik-Test unter sonst gleichen Bedingunge general-Programm statt des academic-Programms wahlt, betragt 90.5% der Chance ohne einen zusatzlichen Punkt. Der Effekt ist signifikant.
 
 Das Konfidenzintervall fur die Chance ist [0.8464843; 0.9679388].
 
 ## 3e)
 *Wie beeinﬂusst die Zugehorigkeit zu einer offentlichen statt einer privaten Schule die Chance, das general- Programm statt des vocation-Programms zu wahlen?*
 ```{r}
-
+exp(0.598763 - 1.937454) 
 ```
 
+Die Chance, dass eine Person, die eine offentliche Schule besucht, c.p. das general- Programm statt des vocation-Programms wahlt, betragt nur 26.2% der Chance einer Person, die eine private Schule besucht. 
 
+## 3f)
+*Wie groß ist die Chance, dass das vocation-Programm anstatt des general-Programms gewahlt wird? Beziehen Sie sich hierbei auf die Beobachtungen im Datensatz und interpretieren Sie die Werte fur die Beobachtungen 177 und 178.*
+```{r}
+data[177, ]
+data[178, ]
+```
 
+```{r}
+pred_177 <- predict(prog_mnl, newdata = data[177, ], type = "probs")
+pred_178 <- predict(prog_mnl, newdata = data[178, ], type = "probs")
+pred_177
+pred_178
+```
+Beobachtung 177 hat 2.2-mal hohere Chance, dass general-Programm anstatt des vocation-Programms gewahlt wird. Beobachtung 178 hat 2.1-mal hohere Chance, dass vocation-Programm anstatt des general-Programms gewahlt wird.
+
+## 3g)
+*Veriﬁzieren Sie, dass fur eine Beobachtung die Summe der geschatzten Wahrscheinlichkeiten gleich 1 ist.*
+```{r}
+sum(pred_177)
+sum(pred_178)
+```
+
+## 3h)
+*Wie groß ist die geschatzte Wahrscheinlichkeit, dass jemand aus der mittleren sozio-okonomischen Klasse, der eine Privatschule besucht und folgende Punkte in den Tests erhalten hat, read = 67, write = 60, math = 47, science = 51, socst = 70, das Programm general wahlt?*
+```{r}
+pred_3h <- predict(prog_mnl, newdata = data.frame(ses = "middle", schtyp  = "private",  read = 67, write = 60, math = 47,
+science = 51, socst = 70), type = "probs")
+pred_3h
+```
+Die geschatzte Wahrscheinlichkeit, dass jemand aus der mittleren sozio-okonomischen Klasse, der eine Privatschule besucht und folgende Punkte in den Tests erhalten hat, read = 67, write = 60, math = 47, science = 51, socst = 70, wahlt das Programm general ist 11.99%.
+
+## 3i)
+*Wurden Sie die Variable race mit in Ihr Modell aufnehmen?*
+```{r}
+tab <- xtabs(~ prog + race, data = data)
+tab
+prop.table(tab, 1)
+```
+Das Aufnehmen der Variable race mit in das Modell ware nicht sinnvoll, weil es zu wenig Beobachtungen von african-amer, asian und hispanic im Vergleich zu white gibt.

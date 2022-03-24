@@ -468,7 +468,7 @@ head(data)</code></pre>
 </div>
 <div id="c" class="section level2">
 <h2>3c)</h2>
-<p><em>Was ist der Eﬀekt der niedrigen relativ zur hohen sozio-okonomischen Klasse auf die Chance, das vocation-Programm statt des academic-Programms zu wahlen?</em></p>
+<p><em>Was ist der Effekt der niedrigen relativ zur hohen sozio-okonomischen Klasse auf die Chance, das vocation-Programm statt des academic-Programms zu wahlen?</em></p>
 <pre class="r"><code>exp(0.064990)</code></pre>
 <pre><code>## [1] 1.067148</code></pre>
 <p>Relative Chance, das vocation Programm statt des academic-Programms zu wahlen, erhoht sich, falls man zur niedrigen sozio-okonomischen Klasse im Vergleich zur hohen sozio-okonomischen Klasse gehort. Eine Person aus der niedrigen sozio-okonomischen Klasse hat c.p. eine 1.067-mal so grosse Chance, das vocation Programm statt des academic-Programms zu wahlen, verglichen mit einer Person aus der hohen sozio-okonomischen Klasse. Der Effekt ist aber nicht signifikant.</p>
@@ -484,12 +484,138 @@ exp(CI_math_lower)</code></pre>
 <pre><code>## [1] 0.8464843</code></pre>
 <pre class="r"><code>exp(CI_math_upper)</code></pre>
 <pre><code>## [1] 0.9679388</code></pre>
-<p>Ein zusatzlicher Punkt im Mathematik-Test verrigert die Chance, das general-Programm statt des academic-Programms zu wahlen. Berechnen Sie das Konﬁdenzintervall fur diese Chance. Eine Person mit einem zusätzlichen Punkt im Mathematik-Test hat c.p. eine 0.905-mal so grosse Chance, das general-Programm statt des academic-Programms zu wahlen, verglichen mit einer Person ohne einen zusatzlichen Punkt. Der Effekt ist signifikant.</p>
+<p>Ein zusatzlicher Punkt im Mathematik-Test verrigert c.p. die Chance, das general-Programm statt des academic-Programms zu wahlen. Die Chance, dass eine Person mit einem zusätzlichen Punkt im Mathematik-Test unter sonst gleichen Bedingunge general-Programm statt des academic-Programms wahlt, betragt 90.5% der Chance ohne einen zusatzlichen Punkt. Der Effekt ist signifikant.</p>
 <p>Das Konfidenzintervall fur die Chance ist [0.8464843; 0.9679388].</p>
 </div>
 <div id="e" class="section level2">
 <h2>3e)</h2>
 <p><em>Wie beeinﬂusst die Zugehorigkeit zu einer offentlichen statt einer privaten Schule die Chance, das general- Programm statt des vocation-Programms zu wahlen?</em></p>
+<pre class="r"><code>exp(0.598763 - 1.937454) </code></pre>
+<pre><code>## [1] 0.2621886</code></pre>
+<p>Die Chance, dass eine Person, die eine offentliche Schule besucht, c.p. das general- Programm statt des vocation-Programms wahlt, betragt nur 26.2% der Chance einer Person, die eine private Schule besucht.</p>
+</div>
+<div id="f" class="section level2">
+<h2>3f)</h2>
+<p><em>Wie groß ist die Chance, dass das vocation-Programm anstatt des general-Programms gewahlt wird? Beziehen Sie sich hierbei auf die Beobachtungen im Datensatz und interpretieren Sie die Werte fur die Beobachtungen 177 und 178.</em></p>
+<pre class="r"><code>data[177, ]</code></pre>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">id</th>
+<th align="left">gender</th>
+<th align="left">race</th>
+<th align="left">ses</th>
+<th align="left">schtyp</th>
+<th align="left">prog</th>
+<th align="right">read</th>
+<th align="right">write</th>
+<th align="right">math</th>
+<th align="right">science</th>
+<th align="right">socst</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">177</td>
+<td align="right">59</td>
+<td align="left">female</td>
+<td align="left">white</td>
+<td align="left">middle</td>
+<td align="left">public</td>
+<td align="left">academic</td>
+<td align="right">65</td>
+<td align="right">67</td>
+<td align="right">63</td>
+<td align="right">55</td>
+<td align="right">71</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="r"><code>data[178, ]</code></pre>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">id</th>
+<th align="left">gender</th>
+<th align="left">race</th>
+<th align="left">ses</th>
+<th align="left">schtyp</th>
+<th align="left">prog</th>
+<th align="right">read</th>
+<th align="right">write</th>
+<th align="right">math</th>
+<th align="right">science</th>
+<th align="right">socst</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">178</td>
+<td align="right">78</td>
+<td align="left">female</td>
+<td align="left">white</td>
+<td align="left">middle</td>
+<td align="left">public</td>
+<td align="left">academic</td>
+<td align="right">39</td>
+<td align="right">54</td>
+<td align="right">54</td>
+<td align="right">53</td>
+<td align="right">41</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="r"><code>pred_177 &lt;- predict(prog_mnl, newdata = data[177, ], type = &quot;probs&quot;)
+pred_178 &lt;- predict(prog_mnl, newdata = data[178, ], type = &quot;probs&quot;)
+pred_177</code></pre>
+<pre><code>##   academic    general   vocation 
+## 0.90847704 0.06364906 0.02787390</code></pre>
+<pre class="r"><code>pred_178</code></pre>
+<pre><code>##  academic   general  vocation 
+## 0.1984705 0.2565239 0.5450057</code></pre>
+<p>Beobachtung 177 hat 2.2-mal hohere Chance, dass general-Programm anstatt des vocation-Programms gewahlt wird. Beobachtung 178 hat 2.1-mal hohere Chance, dass vocation-Programm anstatt des general-Programms gewahlt wird.</p>
+</div>
+<div id="g" class="section level2">
+<h2>3g)</h2>
+<p><em>Veriﬁzieren Sie, dass fur eine Beobachtung die Summe der geschatzten Wahrscheinlichkeiten gleich 1 ist.</em></p>
+<pre class="r"><code>sum(pred_177)</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>sum(pred_178)</code></pre>
+<pre><code>## [1] 1</code></pre>
+</div>
+<div id="h" class="section level2">
+<h2>3h)</h2>
+<p><em>Wie groß ist die geschatzte Wahrscheinlichkeit, dass jemand aus der mittleren sozio-okonomischen Klasse, der eine Privatschule besucht und folgende Punkte in den Tests erhalten hat, read = 67, write = 60, math = 47, science = 51, socst = 70, das Programm general wahlt?</em></p>
+<pre class="r"><code>pred_3h &lt;- predict(prog_mnl, newdata = data.frame(ses = &quot;middle&quot;, schtyp  = &quot;private&quot;,  read = 67, write = 60, math = 47,
+science = 51, socst = 70), type = &quot;probs&quot;)
+pred_3h</code></pre>
+<pre><code>##  academic   general  vocation 
+## 0.8568965 0.1198641 0.0232394</code></pre>
+<p>Die geschatzte Wahrscheinlichkeit, dass jemand aus der mittleren sozio-okonomischen Klasse, der eine Privatschule besucht und folgende Punkte in den Tests erhalten hat, read = 67, write = 60, math = 47, science = 51, socst = 70, wahlt das Programm general ist 11.99%.</p>
+</div>
+<div id="i" class="section level2">
+<h2>3i)</h2>
+<p><em>Wurden Sie die Variable race mit in Ihr Modell aufnehmen?</em></p>
+<pre class="r"><code>tab &lt;- xtabs(~ prog + race, data = data)
+tab</code></pre>
+<pre><code>##           race
+## prog       african-amer asian hispanic white
+##   academic            9     6       11    79
+##   general             5     4        4    32
+##   vocation            6     1        9    34</code></pre>
+<pre class="r"><code>prop.table(tab, 1)</code></pre>
+<pre><code>##           race
+## prog       african-amer      asian   hispanic      white
+##   academic   0.08571429 0.05714286 0.10476190 0.75238095
+##   general    0.11111111 0.08888889 0.08888889 0.71111111
+##   vocation   0.12000000 0.02000000 0.18000000 0.68000000</code></pre>
+<p>Das Aufnehmen der Variable race mit in das Modell ware nicht sinnvoll, weil es zu wenig Beobachtungen von african-amer, asian und hispanic im Vergleich zu white gibt.</p>
 </div>
 </div>
 
