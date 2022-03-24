@@ -1,0 +1,115 @@
+---
+title: "Aufgabenblatt 02: Generalisierte lineare Modelle"
+author: "Anatol"
+date: "3/23/2022"
+output: 
+  html_document:
+    code_folding: hide
+    df_print: kable
+    fig_caption: yes
+    fig_height: 5
+    fig_width: 5
+    theme: united
+    self_contained: yes
+    toc: yes
+    toc_float: yes
+    toc_level: 3
+---
+
+```{r, include = FALSE}
+library(dplyr)
+library(magrittr)
+library(flair)
+library(pipeR)
+library(knitr)
+library(rmarkdown)
+library(shiny)
+library(shinyWidgets)
+library(arm)
+library(rAmCharts)
+library(xfun)
+library(car)
+library(effects)
+library(lmtest)
+library(MASS)
+library(margins)
+library(faraway)
+library(nnet)
+library(AER)
+colorize <- function(x, color) {
+  if (knitr::is_latex_output()) {
+    sprintf("\\textcolor{%s}{%s}", color, x)
+  } else if (knitr::is_html_output()) {
+    sprintf("<span style='color: %s;'>%s</span>", color, 
+      x)
+  } else x
+}
+
+xfun::pkg_load2(c("htmltools", "mime"))
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{css, echo=FALSE}
+.description {
+  color: gray;
+  font-style: italics;
+```
+
+# Aufgabe 3: Multinomiale Modelle
+```{r}
+data <- hsb
+head(data)
+str(data)
+summary(data)
+```
+## 3a)
+*Passen Sie fur die Variable prog ein multinomiales Modell an. Nehmen Sie die sozio-okonomische Klasse, den Indikator fur den Schultyp sowie die Anzahl der Punkte in den jeweiligen Tests als Variablen in Ihr Modell mit auf.*
+```{r}
+prog_mnl <- multinom(prog ~ ses + schtyp + read	+ write + math + science	+ socst, data = data)
+summary(prog_mnl)
+```
+## 3b)
+*Schauen Sie sich den Output des angepassten Modells an. Welche Referenzkategorie haben Sie verwendet? Mehr Ubersicht bringt die Funktion coeftest aus dem AER-Paket.*
+```{r}
+coeftest(prog_mnl)
+```
+
+Die verwendete Referenzkartegorie bei der abhangigen Variable ist academic. Die Referenzkategorie ist bei der sozio-okonomischen Klasse "high" und beim Schultyp die Auspragung "private".
+
+## 3c)
+*Was ist der Eﬀekt der niedrigen relativ zur hohen sozio-okonomischen Klasse auf die Chance, das vocation-Programm statt des academic-Programms zu wahlen?*
+```{r}
+exp(0.064990)
+
+```
+
+Relative Chance, das vocation Programm statt des academic-Programms zu wahlen, erhoht sich, falls man zur niedrigen sozio-okonomischen Klasse  im Vergleich zur hohen sozio-okonomischen Klasse gehort. Eine Person aus der niedrigen sozio-okonomischen Klasse hat c.p. eine 1.067-mal so grosse Chance, das vocation Programm statt des academic-Programms zu wahlen, verglichen mit einer Person aus der hohen sozio-okonomischen Klasse.
+Der Effekt ist aber nicht signifikant.
+
+
+## 3d)
+*d) Wie beeinﬂusst ein zusatzlicher Punkt im Mathematik-Test die Chance, das general-Programm statt des academic-Programms zu wahlen? Berechnen Sie das Konﬁdenzintervall fur diese Chance.*
+```{r}
+exp(-0.099625)
+
+CI_math_lower <- -0.099625 - qnorm(.975)* 0.034204
+CI_math_upper <- -0.099625 + qnorm(.975)* 0.034204
+exp(CI_math_lower)
+exp(CI_math_upper)
+
+```
+Ein zusatzlicher Punkt im Mathematik-Test verrigert die Chance, das general-Programm statt des academic-Programms zu wahlen. Berechnen Sie das Konﬁdenzintervall fur diese Chance. Eine Person mit einem zusätzlichen Punkt im Mathematik-Test hat c.p. eine 0.905-mal so grosse Chance, das general-Programm statt des academic-Programms zu wahlen, verglichen mit einer Person ohne einen zusatzlichen Punkt. Der Effekt ist signifikant.
+
+Das Konfidenzintervall fur die Chance ist [0.8464843; 0.9679388].
+
+## 3e)
+*Wie beeinﬂusst die Zugehorigkeit zu einer offentlichen statt einer privaten Schule die Chance, das general- Programm statt des vocation-Programms zu wahlen?*
+```{r}
+
+```
+
+
+
