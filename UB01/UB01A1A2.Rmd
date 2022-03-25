@@ -184,7 +184,7 @@ beta1 <- (sum(x*y) - n*x_mean*y_mean)/(sum(x^2) - n*x_mean^2)
 
 beta1
 lin_reg$coefficients[2]
-cov(data$prestige, data$education)/var(data$education)
+cov(x, y)/var(x)
 ```
 ```{r}
 beta0 <- (sum(x*y) - beta1*sum(x^2))/sum(x)
@@ -208,6 +208,9 @@ sst
 sse
 ssr
 
+sum((lin_reg$fitted - y_mean)^2)
+sum((y - lin_reg$fitted)^2)
+
 
 ```
 
@@ -216,6 +219,7 @@ ssr
 ```{r}
 sse/sst
 1 - ssr/sst
+summary(lin_reg)$r.squared
 ```
 
 
@@ -229,7 +233,7 @@ summary(lin_reg_mul)
 
 ```
 
-Wenn die abhangige Variable mit 2 multipliziert wird, verdoppeln sich $β_0$ und $β_1$. $R^2$ verandert sich nicht.
+Wenn die abhangige Variable mit 2 multipliziert wird, verdoppeln sich $β_0$ und $β_1$. Standardfehler verdoppeln sich, t- und p-Werte bleiben gleich. $R^2$ verandert sich nicht.
 
 # Aufgabe 2: Modellannahmen
 
@@ -256,7 +260,10 @@ qqnorm(lin_reg$residuals)
 qqline(lin_reg$residuals)
 ```
 
-Da die Punkte nicht immer auf der Geraden liegen, kann man davon ausgehen, dass die Annahme 4) verletzt ist.
+Erklarungsgehalt fur die oberen Werte ist bisschen schwacher, deswegen passt das hier nicht genau. (Im oberen Bereich unterschatzen wir das Prestige tendenziell) 
 
+```{r}
+plot(lin_reg)
+```
 
 

@@ -1,20 +1,30 @@
-# Folie 20 Beispiel 1.1
+#########################################################
+# Folie 20: Beispiel 1.1
+#########################################################
 
 YT <- c(37.48, 25.13, 8.64, 6.26, 55.34, 42.84, 36.94, 26.44, 11.00, 81.16, 29.26, 7.20, 25.56, 17.57, 16.42)
 S <- c(6.18, 4.73, -7.14, -8.14, 27.24, -0.28, 15.34, 5.24, -2.80, 13.78, 5.26, -6.50, -0.84, 6.77, 0.46)
 shiw <- data.frame(YT, S)
 plot(shiw$YT, shiw$S, xlab = "Einkommen (1000 EUR)", ylab = "Ersparnis (1000 EUR)")
 
-
+#########################################################
+# Folie 23: Beispiel 1.1
+#########################################################
 model <- lm(S ~ YT, data = shiw)
 summary(model)
 abline(model, col = "red")
+hist(model$residuals, prob = TRUE)
+lines(density(model$residuals), lwd = 2, col = 'red')
+abline(v = mean(model$residuals), col = 'green')
+abline(v = mean(model$residuals), col = 'blue')
+abline(v = quantile(model$residuals, .25), col = 'blue')
+abline(v = quantile(model$residuals, .75), col = 'blue')
 
+plot(ecdf(model$residuals))
 #########################################################
 # Folie 46: Regressionsebene
 #########################################################
 
-install.packages("scatterplot3d")
 library(scatterplot3d)
 
 data(iris)
