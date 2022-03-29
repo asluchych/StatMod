@@ -62,31 +62,36 @@ str(shiw2012)
 *Sie wollen mit samtlichen oben aufgefuhrten Variablen ein Regressionsmodell schatzen. Zudem interessieren Sie sich brennend fur die prozentuale Veranderung der Konsumausgaben bei einer Erhohung des Einkommens um ein Prozent. Schatzen Sie daher bitte ein geeignetes Modell und berechnen Sie die interessierende Große.*
 
 ```{r}
-linRegFull <- lm(cons ~ inc + large + south + female + mar, data = shiw2012)
+linRegFull <- lm(cons ~ inc + factor(large) + factor(south) + factor(female) + factor(mar), data = shiw2012)
 summary(linRegFull)
 
-linRegElas <- lm(log(cons) ~ log(inc) + large + south + female + mar, data = shiw2012)
+linRegElas <- lm(log(cons) ~ log(inc) + factor(large) + factor(south) + factor(female) + factor(mar), data = shiw2012)
 summary(linRegElas)
 
 ```
-Bei einer Erhohung des Einkommens um ein Prozent erhohen sich die Konsumausgaben um 0.54%.
+Bei einer Erhohung des Einkommens um ein Prozent erhohen sich die Konsumausgaben c.p. um 0.54%.
 
 
 ## 5b)
 
 *Schatzen Sie bitte nun sowohl die naherungsweise als auch die exakte Semi-Elastizitat der Konsumausgaben bezuglich des Dummys fur das Geschlecht des Haushaltsvorstandes.*
 ```{r}
-100*linRegElas$coefficients[[5]]
-100*(exp(linRegElas$coefficients[[5]]) - 1)
+100*coef(linRegElas)["factor(female)1"]
+100*(exp(coef(linRegElas)["factor(female)1"]) - 1)
 ```
-Wenn Haushaltsvorstand weiblich ist, sinken die Konsumausgaben um 2.68% (näherungsweise um 2.71%)
+Wenn Haushaltsvorstand weiblich ist, sinken die Konsumausgaben c.p. um 2.68% (näherungsweise um 2.71%)
 
 ## 5c)
 *Sie mochten nun fur einen konkreten, nicht in der Stichprobe beﬁndlichen, Haushalt die Konsumausgaben prognostizieren. Der betrachtete Haushalt sei groß, verfuge uber ein Einkommen von 30.000 EUR, habe einen unverheirateten und weiblichen Haushaltsvorstand und beﬁnde sich im Norden des Landes. Gehen Sie dabei von einem normalverteilten Storterm aus. Nutzen Sie ein Element der summary des geschatzten Regressionsmodells.*
 
 ```{r}
-predict(linRegFull, data.frame(inc = 30000, large = 1, south = 0, female = 1, mar = 0))
-exp(predict(linRegElas, data.frame(inc = 30000, large = 1, south = 0, female = 1, mar = 0)))
+s2 <- summary(linRegElas)$sigma^2
+kf <- exp(s2/2)
+
+pred_elas <-predict(linRegElas, data.frame(inc = 30000, large = 1, south = 0, female = 1, mar = 0))
+
+kf*exp(pred_elas)
+
 
 ```
-Ein Haushalt, der groß ist,  uber ein Einkommen von 30000 EUR verfuge,  einen unverheirateten und weiblichen Haushaltsvorstand habe und sich im Norden des Landes beﬁnde, gibt 23570.96 EUR fur Konsum aus.
+Ein Haushalt, der groß ist,  uber ein Einkommen von 30000 EUR verfuge,  einen unverheirateten und weiblichen Haushaltsvorstand habe und sich im Norden des Landes beﬁnde, gibt 23917.97  EUR fur Konsum aus.
