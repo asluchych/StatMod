@@ -54,7 +54,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Aufgabe 6
 
 ```{r}
-psycho <- read.delim("psycho.txt", sep = " ")
+psycho <- read.table("psycho.txt", sep = " ")
 head(psycho)
 str(psycho)
 summary(psycho)
@@ -73,29 +73,44 @@ str(psycho)
 *Gehen Sie vom vollen Modell aus (ohne Interaktionsterme) und wenden Sie die Ruckwartselimination auf das Modell an. D.h. passen Sie das Modell an und eliminieren Sie dann die Variable mit dem hochsten p-Wert
 uber dem gewahlten Signiﬁkanzniveau (5%). Wiederholen Sie diese Vorgehensweise so lange, bis nur noch Variablen mit signiﬁkanten Parametern im Modell enthalten sind. Welches beste Modell erhalten Sie?*
 ```{r}
-linReg10 <- lm(gpa ~ ., data = psycho)
-summary(linReg10)
+pairs(psycho)
+```
 
-linReg9 <- lm(gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c4 + c5, data = psycho)
-summary(linReg9)
 
-linReg8 <- lm(gpa ~ iq + alter + sex + total + c1 + c2 + c3 + c5, data = psycho)
-summary(linReg8)
+```{r}
+sel_model <- lm(gpa ~ ., data = psycho)
+summary(sel_model)
+plot(sel_model)
+```
+```{r}
+back_01 <- update(sel_model, . ~. - c4)
+summary(back_01)
+```
+```{r}
+back_02 <- update(back_01, . ~. - c6)
+summary(back_02)
+```
+```{r}
+back_03 <- update(back_02, . ~. - c3)
+summary(back_03)
+```
+```{r}
+back_04 <- update(back_03, . ~. - total)
+summary(back_04)
+```
+```{r}
+back_05 <- update(back_04, . ~. - c1)
+summary(back_05)
+```
 
-linReg7 <- lm(gpa ~ iq + alter + sex + total + c1 + c2 + c5, data = psycho)
-summary
-
-linReg6 <- lm(gpa ~ iq + sex + total + c1 + c2 + c5, data = psycho)
-summary(linReg6)
-
-linReg5 <- lm(gpa ~ iq + sex + c1 + c2 + c5, data = psycho)
-summary(linReg5)
-
-linReg4 <- lm(gpa ~ iq + sex + c2 + c5, data = psycho)
-summary(linReg4)
-
-linReg3 <- lm(gpa ~ iq + sex + c2, data = psycho)
-summary(linReg3)
+```{r}
+back_06 <- update(back_05, . ~. - c5)
+summary(back_06)
+```
+```{r}
+back_final <- update(back_06, . ~. - alter)
+summary(back_final)
+plot(back_final)
 ```
 
 Das beste Modell ist gpa = $β_0 + β_1*iq + β_2*sex + β_3*c2$ mit $R^2$ gleich 0.5375.
@@ -104,23 +119,35 @@ Das beste Modell ist gpa = $β_0 + β_1*iq + β_2*sex + β_3*c2$ mit $R^2$ gleic
 *Wenden Sie nun die schrittweise Selektion mit dem AIC (Funktion stepAIC aus dem Paket MASS in R) auf den Datensatz an. Achten Sie darauf, dass Sie die Argumente der Funktion stepAIC richtig deﬁnieren. Verwenden Sie dabei zunachst das volle Modell und dann das Nullmodell als Ausgangsmodell.*
 
 ```{r}
-stepAIC(linReg10, direction = "backward")
+step_AIC_full <- stepAIC(sel_model, direction = "both")
+step_AIC_full
+```
+```{r}
+stepAIC(sel_model, scope = list(upper =  ~ iq + alter + sex
+                                + total + c1 + c2 + c3 + c4 + c5 + c6, lower = ~ 1)) 
 ```
 
 Schrittweise Selektion (AIC): das volle Modell als Ausgangsmodell: $gpa = β_0 + β_1*iq + β_2*alter + β_3*sex + β_4*total + β_5*c1 + β_6*c2 + β_7*c3 + β_8*c5$
 
 ```{r}
-linReg0 <- lm(gpa ~ 1, data = psycho)
-stepAIC(linReg0, direction = "forward", scope = formula(linReg10))
-
+sel_model_null <- lm(gpa ~ 1, data = psycho)
+stepAIC(sel_model_null, scope = list(upper =  ~ iq + alter + sex
+                                + total + c1 + c2 + c3 + c4 + c5 + c6, lower = ~ 1))
 ```
-Schrittweise Selektion (AIC): das Nullmodell als Ausgangsmodell: $gpa = β_0 + β_1*iq + β_2*alter + β_3*sex + β_4*c1 + β_5*c2 + β_6*c5$
+Schrittweise Selektion (AIC): das Nullmodell als Ausgangsmodell: $gpa = β_0 + β_1*iq + β_2*c5 + β_3*sex + β_4*alter + β_5*c2$
 
 ## 6d)
 *Vergleichen Sie nun Ihr Ergebnis aus c) mit einer schrittweisen Selektion basierend auf dem BIC (und dem vollen Modell als Ausgangsmodell). Schauen Sie sich in der zugehorigen Hilfedatei mogliche Argumente der Funktion an. Die Funktion nobs macht Ihnen hier das Leben leichter. Hatten Sie das Ergebnis so erwartet?*
 ```{r}
-step(linReg10, direction = "backward", k = log(nrow(psycho)))
+step_BIC_full <- step(sel_model, direction = "both", k = log(nobs(sel_model)))
+step_BIC_full
 ```
 
-Schrittweise Selektion (BIC): das volle Modell als Ausgangsmodell: $gpa = β_0 + β_1*iq + β_2*sex + β_3*c2$. 
+Schrittweise Selektion (BIC): das volle Modell als Ausgangsmodell: $gpa = β_0 + β_1*iq + β_2*sex + β_3*c2$.
+
+```{r}
+coef(step_AIC_full)
+coef(step_BIC_full)
+```
+
 Das Ergebnis war so zu erwarten, weil AIC Modelle mit vielen Regressoren bevorzugt.
