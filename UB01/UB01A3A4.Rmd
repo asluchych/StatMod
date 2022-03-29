@@ -53,7 +53,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Aufgabe 3: Mehrfachregression  
 
 ```{r}
-states <- as.data.frame(state.x77)
+states <- data.frame(state.x77)
 head(states)
 str(states)
 summary(states)
@@ -66,8 +66,13 @@ summary(states)
 adjustierte Bestimmtheitsmaß?*
 
 ```{r}
-multLinRegFull <- lm (`Life Exp` ~ ., data = states)
+multLinRegFull <- lm (Life.Exp ~ ., data = states)
 summary(multLinRegFull)
+plot(multLinRegFull)
+```
+```{r}
+summary(multLinRegFull)$r.squared
+summary(multLinRegFull)$adj.r.squared
 ```
 
 Bestimmtheitsmaß betragt 0.7362; das adjustierte Bestimmtheitsmaß ist 0.6922.  
@@ -75,20 +80,41 @@ Bestimmtheitsmaß betragt 0.7362; das adjustierte Bestimmtheitsmaß ist 0.6922.
 ## 3b)
 *Welche der erklrenden Variablen sind zu einem Niveau von α = 0,05 statistisch signiﬁkant? Die hierfur notwendigen Schatzwerte konnen aus dem lm-Objekt mit dem summary-Befehl abgerufen werden. Uber die
 Funktion qt konnen Sie Quantile fur t-Verteilungen berechnen.*
+```{r}
+est <- summary(multLinRegFull)$coefficients[, 1]
+se <- summary(multLinRegFull)$coefficients[, 2]
+t_val <- est/se
+all(t_val == summary(multLinRegFull)$coefficients[, 3])
+```
+```{r}
+alpha <- .05
+df <- nrow(states) - length(summary(multLinRegFull)$coefficients[, 1])
+```
+```{r}
+t_krit <-qt(1 - alpha/2, df)
+t_test <- abs(t_val) > t_krit
+t_test
+```
 
 
-Zu einem Niveau von α = 0,05 sind nur die Variablen Murder und HS Grad signifikant.
+
+Zu einem Niveau von α = 0,05 sind nur Intercept sowie Variablen Murder und HS.Grad signifikant.
 
 ## 3c)
 
 *Schauen Sie sich nun die Nullhypothese $β_{Area} = 0$ genauer an. Testen Sie auf zwei verschiedenen Wegen jenseits des einfachen t-Tests, ob die Nullhypothese zu einem Signiﬁkanzniveau von 5% verworfen werden kann. Nutzen Sie dazu die Funktionen confint und pt.*
 
 ```{r}
-confint(multLinRegFull, "Area")
-qt(.025, 42)
-qt(.975, 42)
+confint(multLinRegFull, level = .95)["Area",]
 ```
-Da das 95%-Konfidenzintervall 0 enthalt, kann die Nullhypothese  $β_Area = 0$ nicht verworfen werden. Der Wert des Regressionkoeffizientes -7.383e-08 liegt nicht ausserhalb der 2.5% und 97.5% Grenzen, kann die Nullhypothese ebenso verworfen werden.
+Da das 95%-Konfidenzintervall 0 enthalt, kann die Nullhypothese  $β_{Area} = 0$ nicht verworfen werden. Der Wert des Regressionkoeffizientes -7.383e-08 liegt nicht ausserhalb der 2.5% und 97.5% Grenzen, kann die Nullhypothese ebenso verworfen werden.
+
+```{r}
+test_stat <- summary(multLinRegFull)$coefficients["Area", 3]
+p_val <- 2*pt(test_stat, df)
+p_val < alpha
+```
+Da der p-Wert nicht kleiner als $\alpha$ ist, konnen wir die Nullhypothese nicht ablehnen.
 
 ## 3d)
 
@@ -97,7 +123,7 @@ Da das 95%-Konfidenzintervall 0 enthalt, kann die Nullhypothese  $β_Area = 0$ n
 ```{r}
 linearHypothesis(multLinRegFull, c("Income=0", "Illiteracy=0", "Area=0"))
 
-multLinRegRest <- lm (`Life Exp` ~ Population + Murder + `HS Grad` + Frost, data = states)
+multLinRegRest <- lm (Life.Exp ~ Population + Murder + HS.Grad + Frost, data = states)
 
 ssr_unr <- sum(multLinRegFull$residuals^2)
 ssr_res <- sum(multLinRegRest$residuals^2)
@@ -107,24 +133,55 @@ F_score
 qf(.95, 42, 45)
 
 ```
-Die Nullhypothese $β_{Income} = β_{Illiteracy} = β_{Area} = 0$ kann zum Signifikanzniveau 5% nicht verworfen werden.
+```{r}
+f_krit <- qf(1 - alpha, 3, df)
+F_score > f_krit
+```
+
+```{r}
+anova(multLinRegFull, multLinRegRest)
+```
+```{r}
+linearHypothesis(multLinRegFull, hypothesis.matrix = 
+                   rbind(c(rep(0, 2), 1, rep(0, 5)),
+                         c(rep(0, 3), 1, rep(0, 4)),
+                         c(rep(0, 7), 1)
+                   ),
+                 rhs = rep(0, 3)
+)
+```
+
+
+
+Die Nullhypothese $β_{Income} = β_{Illiteracy} = β_{Area} = 0$ kann zum Signifikanzniveau 5%  nicht verworfen werden.
 
 ## 3e)
 
 *Testen Sie nun, ob die Koeﬃzienten $β_{Illiteracy} und β_{HS.Grad}$ gleich sind. Nutzen Sie dazu bitte die Funktion linearHypothesis aus dem Paket car.*
 
 ```{r}
-linearHypothesis(multLinRegFull, "Illiteracy = `HS Grad`")
+linearHypothesis(multLinRegFull, "Illiteracy = HS.Grad")
 ```
+
+```{r}
+linearHypothesis(multLinRegFull,
+                 hypothesis.matrix = c(rep(0, 3), 1, 0, -1, rep(0, 2)))
+
+```
+
 Die Hypothese, dass die Koeﬃzienten $β_{Illiteracy} und β_{HS.Grad}$ gleich sind, kann zum Signifikanzniveau 5% nicht verworfen werden.
 
 ## 3f)
 
 *Berechnen Sie ein Modell in welchem Sie einen Interaktionsterm zwischen der Variable Income und Murder unterstellen.*
 ```{r}
-multLinRegFull <- lm (`Life Exp` ~ . + I(Income*Murder), data = states)
-summary(multLinRegFull)
+multLinRegFullInter <- lm (Life.Exp ~ . + Income*Murder, data = states)
+summary(multLinRegFullInter)
 ```
+Der Einfluss von Income auf Lebenserwartung hat sich in Abhangigkeit von Murder verandert. Bei einer Morderate von 0, steigt die Lebenserwarung mit um 0.0007 Jahre fur jeden weiteren Euro Lebenseinkommen. Aber für jeden Anstieg von Murder um 1 pro 100000, sinkt die Steigung von Income um 0.0001. Das heisst, dass die Lebenserwartung mit steigendem Einkommen weniger stark ansteigt, wenn der Bundesstaat hohe Mordraten aufweist.
+
+Interaktionsterme machen Interpretation also deutlich schwieriger, konnen aber einen wichtigen Beitrag leisten. Problematisch werden Interaktionsterme, wenn kategorische Daten verwendet werden, da für jede Kategorie eine weitere Variable aufgenommen werden muss.
+
 
 # Aufgabe 4: Dummy-Variablen
 
@@ -133,11 +190,22 @@ summary(multLinRegFull)
 ```{r}
 Prestige
 prest_data <- na.omit(Prestige)
-multLinRegPrest <- lm(prestige ~ education + income + women + type, data = prest_data)
+multLinRegPrest <- lm(prestige ~ education + income + women + as.factor(type), data = prest_data)
 summary(multLinRegPrest)
 ```
 Professionelle haben c.p. um 5.9 mehr Prestigepunkte als Blue-Collar-Arbeiter. White-Collar-Worker haben c.p. um 2.9 weniger Prestigepunkte als Blue-Collar-Arbeiter. Bei der Interpretation von Dummyvariablen ist die Referenzkategorie zu beachten.
 
+Die Dummy-Variablen bedeuten, dass der Intercept von prof um rund 6 Prestigepunkte hoher ist, als von bc. Ebenso ist der Prestigewert von bc um fast 3 kleiner als der von bc. Diese Variablen sind aber nicht signifikant von 0 unterschieden.
 
+```{r}
+prest_data$type <- relevel(prest_data$type, ref = 3)
+prest_data$type
+```
+
+```{r}
+multLinRegPrestRelev <- lm(prestige ~ education + income + women + as.factor(type), data = prest_data)
+summary(multLinRegPrestRelev)
+```
+Jetzt sehen wir, dass sich zumindest bc and prof signifikant von 0 unterscheiden.
 
 
