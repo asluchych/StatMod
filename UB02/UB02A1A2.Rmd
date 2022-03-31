@@ -61,13 +61,17 @@ insur <- read.csv("insurance.csv")
 head(insur)
 str(insur)
 summary(insur)
+dim(data)
 ```
 ```{r}
 any(is.na(insur))
 ```
 
 ```{r}
-hist(insur$hhincome, breaks = 100, prob = TRUE)
+hist(insur$hhincome)
+```
+```{r}
+hist(log(insur$hhincome + 0.01))
 ```
 
 ## 1a)
@@ -83,7 +87,7 @@ summary(insur$loghhincome)
 
 
 ```{r}
-hist(insur$loghhincome, breaks = 100, prob = TRUE)
+hist(insur$loghhincome)
 ```
 ```{r}
 insur$ins <- as.factor(insur$ins)
@@ -96,6 +100,19 @@ str(insur)
 ## 1b)
 *Passen Sie zunachst einmal das volle Modell an und nutzen Sie dabei den Logit-Link.*
 ```{r}
+plot(ins ~ married, data = insur)
+plot(ins ~ retire, data = insur)
+plot(ins ~ hstatusg, data = insur)
+plot(ins ~ loghhincome, data = insur)
+plot(ins ~ hisp, data = insur)
+plot(ins ~ age, data = insur)
+plot(ins ~ educyear, data = insur)
+
+
+```
+
+
+```{r}
 logRegFull <- glm(ins ~ married + retire + hstatusg + loghhincome + 
                    age + hisp + educyear, family = binomial(link = "logit"), data = insur)
 summary(logRegFull)
@@ -106,16 +123,28 @@ interpretieren Sie die Graﬁk? Die Funktion binned.resids mit den bereits zum P
 konnte Ihnen hier helfen.*
 
 ```{r}
-binnedplot(logRegFull$fitted.values, logRegFull$residuals)
-binned.resids(logRegFull$fitted.values, logRegFull$residuals)
+binnedplot(fitted(logRegFull), residuals(logRegFull))
 ```
 
-Die Residuen scheinen im Mittelwert Null zu sein und konstante Varianz (Homoskedastizitat) zu haben.
+
+```{r}
+br <- binned.resids(fitted(logRegFull), residuals(logRegFull))
+str(br)
+head(br$binned)
+
+mean(abs(br$binned[, "ybar"]) <= br$binned[, "2se"])
+```
+
+Die Coverage Rate ist sehr gering. Das spricht fur eine Fehlspezifikation.
 
 ## 1d)
 *Interpretieren Sie zunachst ganz allgemein die Regressionskoffizienten Ihres Modells. Wie verandert sich c.p. durch eine Heirat die Chance, krankenversichert zu sein? Wie verandert sich c.p. die Chance, wenn eine Person ein weiteres Ausbildungsjahr absolviert hat?*
 
-Die Chance, krankversichert zu sein, erhoht sich durch eine Heirat und die Absolvierung eines weiteren Ausbildungsjahres.
+Die Chance, krankversichert relativ zu nicht krankversichert zu sein, nimmt wenn man verheiratet relativ zu nicht verheiratet ist, und die Absolvierung eines weiteren Ausbildungsjahres zu.
+
+```{r}
+exp(coef(logRegFull))
+```
 
 ## 1e)
 *Berechnen Sie den durchschnittlichen marginalen Effekt einer Veranderung der Variable retire.*
@@ -126,7 +155,7 @@ ame_retire <- mean(eff_retire)
 ame_retire
 
 ```
-Der durchschnittliche marginale Effekt einer Veranderung der Variable retire ist 0.04723126: im Mittel uber alle Personen haben wir einen positiven Effekt von Renter-Status einer Person von 0.04723126 der Wahrscheinlichkeit, dass die Person krankversichert ist.
+Der durchschnittliche marginale Effekt einer Veranderung der Variable retire ist 0.04723126: Im Durchschnitt erhoht sich die Wahrscheinlichkeit, versichert zu sein um 0.0472, wenn die Person zum Rentner wird.
 
 ## 1f)
 *Passen Sie ein Modell ohne die Variablen married, retire und hisp an. Berechnen Sie sodann anhand dieses Modells den marginalen Effekt im Mittelwert bezuglich der Variable educyear.*
@@ -138,19 +167,43 @@ summary(logRegRest)
 
 X <- model.matrix(logRegRest)
 X_bar <- colMeans(X)
-eta_bar <- X_bar %*% coef(logRegRest)
-mem_educyear <- binomial()$linkinv(eta_bar) * (1 - binomial()$linkinv(eta_bar)) * coef(logRegRest)["educyear"]
-mem_educyear
+X_bar0 <- X_bar
+X_bar0["hstatusg1"] <- 0 
+eta_0 <- X_bar0 %*% coef(logRegRest)
+
+prob_0 <- exp(eta_0)/(1 + exp(eta_0))
+prob_0
+binomial()$linkinv(eta_0)
+
+
+mem_0 <- prob_0 * (1 - prob_0) * coef(logRegRest)["educyear"]
+mem_0
+
+```
+```{r}
+X_bar1 <- X_bar
+X_bar1["hstatusg1"] <- 1 
+eta_1 <- X_bar1 %*% coef(logRegRest)
+
+prob_1 <- exp(eta_1)/(1 + exp(eta_1))
+
+mem_1 <- prob_1 * (1 - prob_1) * coef(logRegRest)["educyear"]
+mem_1
 ```
 
-Der marginale Effekt im Mittelwert bezuglich der Variable educyear betragt 0.018 Positiver Effekt  eines weiteren Bildungsjahres auf die Wahrscheinlichkeit, krankversichert zu sein. Jedes weitere Bildungsjahr erhoht die Wahrscheinlichkit um 0.018.
+MEM bei einer ungesunden Person: mit einem weiteren Bidlungsjahr steigt die Wahrscheinlichkeit, versichert zu sein um 1,7%.
+
+MEM bei einer gesunden Person: mit einem weiteren Bidlungsjahr steigt die Wahrscheinlichkeit, versichert zu sein um 1,8%.
 
 ## 1g)
 *Schauen Sie sich die Effektplots fur die Variable educyear im Modell aus Teilaufgabe b) an. Hinweis: Nutzen Sie die Funktion allEffects aus dem effects-Paket.*
 
 ```{r}
-plot(allEffects(logRegFull)[7])
-
+logit_eff <- allEffects(logRegFull)
+names(logit_eff)
+plot(logit_eff)
+plot(logit_eff[[7]], type = "link")
+plot(logit_eff[[7]], type = "response")
 ```
 
 ## 1h)
@@ -158,11 +211,9 @@ plot(allEffects(logRegFull)[7])
 Sie 0,5 an.*
 
 ```{r}
-marg_table_insr <- prop.table(table(Obs = insur$ins, Pred = round(fitted(logRegFull))))
-marg_table_insr
-marg_table_insr[1, 1] + marg_table_insr[2, 2]
-
-
+tab <- prop.table(table(Wahr = insur$ins, Prog = round(fitted(logRegFull))))
+tab
+sum(diag(tab))
 ```
 
 Beim Schwellenwert von 0.5 ist der Anteil der korrekt vorhergesagten Werte betragt 63.76%.
@@ -176,6 +227,8 @@ logRegNull <- glm(ins ~ 1, family = binomial(link = "logit"), data = insur)
 PseudoR2 <- 1 - logLik(logRegFull)/logLik(logRegNull)
 PseudoR2
 
+
+1 - logRegFull$deviance/logRegFull$null.deviance
 ```
 
 Das Pseudo-R2 fur das Modell aus Teilaufgabe b) betragt 0.0936
@@ -185,21 +238,18 @@ Das Pseudo-R2 fur das Modell aus Teilaufgabe b) betragt 0.0936
 *
 
 ```{r}
+lrtest(logRegNull, logRegFull)
 lrtest(logRegFull, . ~ . + I(predict(logRegFull, type = "link")^2))
 ```
-Da das erweiterte Modell mit $\widehat{η^2_i}$ eine signifikanz kleinere Signifikanz als das Modell ohne $\widehat{η^2_i}$, ist das Modell inkorrekt spezifiziert. Wie konnen davon ausgehen, dass quadrierter linearer Pradiktor einen signifikanten Erklarungsgehalt hatte.
+Da das erweiterte Modell mit $\widehat{η^2_i}$ eine signifikant kleinere Signifikanz als das Modell ohne $\widehat{η^2_i}$, ist das Modell inkorrekt spezifiziert. Wie konnen davon ausgehen, dass quadrierter linearer Pradiktor einen signifikanten Erklarungsgehalt hatte.
 
 
 ## 1k)
 *Fuhren Sie eine Variablenselektion mit der schrittweisen Selektion durch. Gehen Sie vom Modell aus Teilaufgabe b) aus und geben Sie dieses Modell mit samtlichen Interaktionstermen zweiter Ordnung als Maximalmodellan (uber Nutzung von ^2 in Formel). Nutzen Sie dabei das Paket MASS.*
 ```{r}
-logRegMax <- glm(ins ~ married + retire + hstatusg + loghhincome + 
-                   age + hisp + educyear + married^2 + retire^2 + hstatusg^2 + loghhincome^2 + 
-                   age^2 + hisp^2 + educyear^2, family = binomial(link = "logit"), data = insur)
-stepAIC(logRegMax, direction = "backward")
+step_mod <- stepAIC(logRegFull, scope = list(upper = ~ .^2), direction = "both")
+summary(step_mod)
 ```
-Schrittweise Selektion (AIC): das Maximalmodell als Ausgangsmodell: $ins = β_0 + β_1*married + β_2*retire + β_3*hstatusg + β_4*loghhincome + β_5*age + β_6*hisp +β_7*educyear + β_8*married^2 + β_9*retire^2 + β_10*hstatusg^2 + β_11*loghhincome^2 + β_12*age^2 + β_13*hisp^2 +β_14*educyear^2$. 
-
 # Aufgabe 2: Probit Modelle
 
 ## 2a)
@@ -213,17 +263,33 @@ summary(probRegFull)
 ## 2b)
 *Vergleichen Sie die geschatzten Wahrscheinlichkeiten aus dem Logit- und Probit-Modell.*
 ```{r}
-summary(logRegFull)
-summary(probRegFull)
+head(fitted(logRegFull))
+head(fitted(probRegFull))
+summary(fitted(logRegFull) - fitted(probRegFull))
 
 ```
 
-???????????????  
-???????????????  
-???????????????  
+```{r}
+plot(fitted(logRegFull), fitted(probRegFull))
+abline(0,1)
+```
+```{r}
+head(fitted(probRegFull))
+head(pnorm(model.matrix(probRegFull) %*% coef(probRegFull)))
+```
+
  
 ## 2c)
 *Was konnen Sie uber die $\widehat{β_s}$ der beiden Modelle sagen?*
+```{r}
+beta_log <- summary(logRegFull)$coef[, 1]
+beta_log
+
+beta_pro <- summary(probRegFull)$coef[, 1]
+beta_pro
+
+mean(beta_log/beta_pro)
+```
 
 Die $\widehat{β_s}$ der beiden Modelle unterscheiden sich, haben jedoch die gleichen Vorzeichen.
 
@@ -232,9 +298,9 @@ Die $\widehat{β_s}$ der beiden Modelle unterscheiden sich, haben jedoch die gle
 ## 2d)
 *Berechnen Sie den Anteil korrekt vorhergesagter Werte fur das Probit-Modell.*
 ```{r}
-marg_table_insr_prob <- prop.table(table(Obs = insur$ins, Pred = round(fitted(probRegFull))))
-marg_table_insr_prob
-marg_table_insr_prob[1, 1] + marg_table_insr_prob[2, 2]
+tab_prob <- prop.table(table(Obs = insur$ins, Pred = round(fitted(probRegFull))))
+tab_prob
+sum(diag(tab_prob))
 ```
 
 Der Anteil korrekt vorhergesagter Werte fur das Probit-Modell betragt
@@ -244,10 +310,11 @@ Der Anteil korrekt vorhergesagter Werte fur das Probit-Modell betragt
 *Berechnen Sie den durchschnittlichen marginalen Effekt einer Veranderung der Variable retire im Probit-Modell und vergleichen Sie das Ergebnis mit Aufgabe 1 e). Beachten Sie, dass Sie fur diese Berechnung nichteinfach auf die entsprechende Formel des Logit-Modells zuruckgreifen konnen.*
 
 ```{r}
-summary(margins(logRegFull, type = "response"))
-summary(margins(probRegFull, type = "response"))
+eta <- model.matrix(probRegFull) %*% coef(probRegFull)
+eta_prob <- dnorm(eta) * coef(probRegFull)["retire1"]
+ama_prob <- mean(eta_prob)
+ama_prob
 ```
-Der durchschnittliche marginale Effekt einer Veranderung der Variable retire im Probit-Modell betragt 0.0458, wahrend der durchschnittliche marginale Effekt einer Veranderung der Variable retire im Logit-Modell ist 0.0471.
 
 
 
