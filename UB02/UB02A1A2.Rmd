@@ -315,7 +315,3 @@ eta_prob <- dnorm(eta) * coef(probRegFull)["retire1"]
 ama_prob <- mean(eta_prob)
 ama_prob
 ```
-
-
-
-
